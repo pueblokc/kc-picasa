@@ -142,6 +142,46 @@ def test_onthisday(api):
     assert call(server, "/v1/onthisday?date=garbage")[0] == 400
 
 
+def test_onthisday_current_year_is_opt_in(api):
+    import datetime
+    tmp, server, ids = api
+    with open_index(tmp / "index.db") as conn:
+        conn.execute("UPDATE photos SET taken_at_override=? WHERE id=?",
+                     (f"{datetime.date.today().year}-{TODAY_MD}T10:00:00", ids["hike_peak.jpg"]))
+        conn.commit()
+    assert all(y["year"] < datetime.date.today().year for y in call(server, "/v1/onthisday")[1]["years"])
+    assert datetime.date.today().year in [y["year"] for y in
+           call(server, "/v1/onthisday?include_this_year=1")[1]["years"]]
+
+
+def test_things_and_face_groups_routes(api):
+    tmp, server, ids = api
+    assert call(server, "/v1/things")[1] == []
+    assert call(server, "/v1/things/cat")[1] == []
+    db = tmp / "kc-smart" / "embeddings.db"
+    db.parent.mkdir()
+    with sqlite3.connect(db) as conn:
+        conn.execute("CREATE TABLE thing_tags (path TEXT, tag TEXT, score REAL)")
+        conn.execute("INSERT INTO thing_tags VALUES ('example.jpg', 'cat', 0.5)")
+    assert call(server, "/v1/things")[1] == [{"tag": "cat", "count": 1}]
+    assert call(server, "/v1/things/cat")[1] == [{"path": "example.jpg", "score": 0.5}]
+    assert call(server, "/v1/faces/groups")[1] == []
+
+
+def test_video_thumbnail_uses_ffmpeg_path(api, monkeypatch):
+    tmp, server, ids = api
+    from picasapy.app import kc_queries
+    with open_index(tmp / "index.db") as conn:
+        conn.execute("UPDATE photos SET kind='video' WHERE id=?", (ids["hike_peak.jpg"],))
+        conn.commit()
+    seen = []
+    monkeypatch.setattr(kc_queries, "make_video_thumb", lambda path, size: seen.append((path, size)) or b"JPEG")
+    status, body, headers = call(server, f"/v1/thumb/{ids['hike_peak.jpg']}?size=128", raw=True)
+    assert status == 200 and body == b"JPEG"
+    assert headers["Content-Type"] == "image/jpeg"
+    assert seen and seen[0][1] == 128
+
+
 def test_folders_albums_people(api):
     _, server, _ = api
     folders = call(server, "/v1/folders")[1]

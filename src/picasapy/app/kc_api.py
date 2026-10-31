@@ -20,6 +20,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlsplit
 
 from . import kc_queries as q
+from . import kc_things
 
 try:
     from picasapy.app.kc_ui import KC_VERSION
@@ -174,7 +175,32 @@ class _Handler(BaseHTTPRequestHandler):
                     conn, a.get("date"), a.get("from"), a.get("to"), a.get("folder"),
                     a.get("starred") in ("1", "true", "yes"), a.get("limit")))
             if path == "/v1/onthisday":
-                return self._json(200, q.on_this_day(conn, a.get("date"), a.get("limit")))
+                return self._json(200, q.on_this_day(conn, a.get("date"), a.get("limit"),
+                    a.get("include_this_year") == "1"))
+            if path == "/v1/things":
+                return self._json(200, kc_things.list_things(data_dir))
+            if path.startswith("/v1/things/"):
+                return self._json(200, kc_things.photos_with_thing(data_dir, unquote(path[11:])))
+            if path == "/v1/faces/groups":
+                return self._json(200, q.face_groups(conn))
+            if path.startswith("/v1/faces/thumb/"):
+                fid = self._id(path[len("/v1/faces/thumb/"):])
+                crop = q.face_crop(conn, fid) if fid is not None else None
+                if crop is None:
+                    return self._error(404, "no such face")
+                try:
+                    from io import BytesIO
+                    from PIL import Image, ImageOps
+                    with Image.open(crop[0]) as im:
+                        im = ImageOps.exif_transpose(im).convert("RGB")
+                        x1, y1, x2, y2 = crop[1]
+                        im = im.crop((int(x1), int(y1), int(x2), int(y2)))
+                        im.thumbnail((256, 256))
+                        out = BytesIO()
+                        im.save(out, "JPEG", quality=82)
+                    return self._send(200, out.getvalue(), "image/jpeg")
+                except (OSError, ValueError):
+                    return self._error(415, "cannot make a thumbnail for this face")
             if path == "/v1/folders":
                 return self._json(200, q.folders(conn))
             if path == "/v1/albums":
@@ -191,10 +217,10 @@ class _Handler(BaseHTTPRequestHandler):
                 return self._json(200, detail)
             if path.startswith("/v1/thumb/"):
                 pid = self._id(path[len("/v1/thumb/"):])
-                full = q.photo_path(conn, pid) if pid is not None else None
-                if full is None:
+                detail = q.photo_detail(conn, pid) if pid is not None else None
+                if detail is None:
                     return self._error(404, "no such photo")
-                return self._thumb(full, pid, a.get("size"))
+                return self._thumb(detail["path"], pid, a.get("size"), detail["kind"] == "video")
         finally:
             conn.close()
         self._error(404, "not found")
@@ -204,7 +230,7 @@ class _Handler(BaseHTTPRequestHandler):
         raw = unquote(raw)
         return int(raw) if raw.isdigit() else None
 
-    def _thumb(self, full: str, pid: int, size_arg: str | None) -> None:
+    def _thumb(self, full: str, pid: int, size_arg: str | None, video: bool = False) -> None:
         try:
             size = max(32, min(int(size_arg or 256), 1024))
         except ValueError:
@@ -216,7 +242,7 @@ class _Handler(BaseHTTPRequestHandler):
         data = self.server.thumbs.get(key)
         if data is None:
             try:
-                data = q.make_thumb(full, size)
+                data = q.make_video_thumb(full, size) if video else q.make_thumb(full, size)
             except Exception:
                 return self._error(415, "cannot make a thumbnail for this file")
             self.server.thumbs.put(key, data)

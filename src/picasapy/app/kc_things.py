@@ -42,9 +42,11 @@ def list_things(data_dir: str | Path) -> list[dict]:
     db = Path(data_dir) / "kc-smart" / "embeddings.db"
     if not db.is_file():
         return []
-    with sqlite3.connect(db) as conn:
-        conn.executescript(SCHEMA)
-        rows = conn.execute("SELECT tag, COUNT(*) FROM thing_tags GROUP BY tag ORDER BY COUNT(*) DESC, tag").fetchall()
+    with sqlite3.connect(db.as_uri() + "?mode=ro", uri=True) as conn:
+        try:
+            rows = conn.execute("SELECT tag, COUNT(*) FROM thing_tags GROUP BY tag ORDER BY COUNT(*) DESC, tag").fetchall()
+        except sqlite3.OperationalError:
+            return []
     return [{"tag": tag, "count": count} for tag, count in rows]
 
 
@@ -54,7 +56,9 @@ def photos_with_thing(data_dir: str | Path, tag: str, limit: int = 100) -> list[
     db = Path(data_dir) / "kc-smart" / "embeddings.db"
     if not db.is_file():
         return []
-    with sqlite3.connect(db) as conn:
-        conn.executescript(SCHEMA)
-        rows = conn.execute("SELECT path, score FROM thing_tags WHERE tag=? ORDER BY score DESC LIMIT ?", (tag, max(1, min(limit, 500)))).fetchall()
+    with sqlite3.connect(db.as_uri() + "?mode=ro", uri=True) as conn:
+        try:
+            rows = conn.execute("SELECT path, score FROM thing_tags WHERE tag=? ORDER BY score DESC LIMIT ?", (tag, max(1, min(limit, 500)))).fetchall()
+        except sqlite3.OperationalError:
+            return []
     return [{"path": path, "score": score} for path, score in rows]

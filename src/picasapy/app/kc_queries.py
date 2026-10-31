@@ -131,7 +131,8 @@ def photos(
     return [_photo(r) for r in rows]
 
 
-def on_this_day(conn: sqlite3.Connection, month_day: str | None = None, limit: object = None) -> dict:
+def on_this_day(conn: sqlite3.Connection, month_day: str | None = None, limit: object = None,
+                include_this_year: bool = False) -> dict:
     if not month_day:
         today = _dt.date.today()
         month_day = f"{today.month:02d}-{today.day:02d}"
@@ -144,7 +145,8 @@ def on_this_day(conn: sqlite3.Connection, month_day: str | None = None, limit: o
         raise QueryError("date is not a real month-day") from None
     rows = conn.execute(
         _SELECT + f"WHERE {_VISIBLE} AND substr({_TAKEN}, 6, 5) = ? "
-        f"ORDER BY {_TAKEN} DESC, p.id LIMIT ?",
+        + ("" if include_this_year else f"AND substr({_TAKEN}, 1, 4) < '{_dt.date.today().year}' ")
+        + f"ORDER BY {_TAKEN} DESC, p.id LIMIT ?",
         (month_day, clamp_limit(limit, MAX_LIMIT)),
     ).fetchall()
     years: dict[str, list[dict]] = {}
@@ -186,6 +188,34 @@ def people(conn: sqlite3.Connection) -> list[dict]:
     except sqlite3.OperationalError:  # older index without the face table/columns
         return []
     return [dict(r) for r in rows]
+
+
+def face_groups(conn: sqlite3.Connection) -> list[dict]:
+    """Unnamed groups, with a sample face crop locator for each group."""
+    try:
+        rows = conn.execute(
+            "SELECT fg.id, COUNT(f.id) AS faces, COUNT(DISTINCT f.photo_id) AS photos, "
+            "MIN(f.id) AS sample_face_id, MIN(f.photo_id) AS sample_photo_id "
+            "FROM face_group fg JOIN face f ON f.group_id = fg.id "
+            "WHERE f.state = 'unnamed' GROUP BY fg.id ORDER BY faces DESC, fg.id"
+        ).fetchall()
+    except sqlite3.OperationalError:
+        return []
+    return [dict(r) | {"sample_thumb": f"/v1/faces/thumb/{r['sample_face_id']}"} for r in rows]
+
+
+def face_crop(conn: sqlite3.Connection, face_id: int) -> tuple[str, tuple[float, float, float, float]] | None:
+    try:
+        row = conn.execute(
+            "SELECT fd.photo_id, fd.rect_left, fd.rect_top, fd.rect_right, fd.rect_bottom "
+            "FROM face fd WHERE fd.id = ? AND fd.state = 'unnamed'", (face_id,)
+        ).fetchone()
+    except sqlite3.OperationalError:
+        return None
+    if row is None:
+        return None
+    path = photo_path(conn, row[0])
+    return (path, (row[1], row[2], row[3], row[4])) if path else None
 
 
 def photo_detail(conn: sqlite3.Connection, photo_id: int) -> dict | None:
@@ -282,5 +312,26 @@ def make_thumb(path: str, size: int = 256) -> bytes:
         im = ImageOps.exif_transpose(im)
         im.thumbnail((size, size))
         out = io.BytesIO()
+        im.convert("RGB").save(out, "JPEG", quality=82)
+        return out.getvalue()
+
+
+def make_video_thumb(path: str, size: int = 256) -> bytes:
+    """Decode one video frame with bundled ffmpeg, then bound its JPEG size."""
+    import subprocess
+    from io import BytesIO
+    from PIL import Image
+    from imageio_ffmpeg import get_ffmpeg_exe
+
+    result = subprocess.run(
+        [get_ffmpeg_exe(), "-hide_banner", "-loglevel", "error", "-ss", "1",
+         "-i", path, "-frames:v", "1", "-f", "image2pipe", "-vcodec", "mjpeg", "-"],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=20,
+        creationflags=0x08000000 if os.name == "nt" else 0,
+        check=True,
+    )
+    with Image.open(BytesIO(result.stdout)) as im:
+        im.thumbnail((size, size))
+        out = BytesIO()
         im.convert("RGB").save(out, "JPEG", quality=82)
         return out.getvalue()

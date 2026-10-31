@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sqlite3
 import sys
 import urllib.error
 import urllib.request
@@ -74,6 +75,31 @@ def list_albums() -> list[dict]:
 
 def list_people() -> list[dict]:
     return _with_conn(q.people)
+
+
+def face_groups() -> list[dict]:
+    return _with_conn(q.face_groups)
+
+
+def _things_query(sql: str, args: tuple = ()) -> list[dict]:
+    db = _data_dir / "kc-smart" / "embeddings.db"
+    if not db.is_file():
+        return []
+    with sqlite3.connect(db.as_uri() + "?mode=ro", uri=True) as conn:
+        conn.row_factory = sqlite3.Row
+        try:
+            return [dict(row) for row in conn.execute(sql, args)]
+        except sqlite3.OperationalError:
+            return []
+
+
+def list_things() -> list[dict]:
+    return _things_query("SELECT tag, COUNT(*) AS count FROM thing_tags GROUP BY tag ORDER BY count DESC, tag")
+
+
+def photos_with_thing(tag: str, limit: int = 100) -> list[dict]:
+    return _things_query("SELECT path, score FROM thing_tags WHERE tag=? ORDER BY score DESC LIMIT ?",
+                         (tag, max(1, min(int(limit), 500))))
 
 
 def photo_stats() -> dict:
@@ -141,6 +167,10 @@ TOOLS: dict[str, tuple[object, str, dict]] = {
     "list_folders": (list_folders, "All indexed folders with photo counts.", _schema({})),
     "list_albums": (list_albums, "All albums with photo counts.", _schema({})),
     "list_people": (list_people, "Named people from face tags, with photo counts.", _schema({})),
+    "face_groups": (face_groups, "Unnamed face groups, counts and sample face thumbnails.", _schema({})),
+    "list_things": (list_things, "Auto-tagged things with photo counts.", _schema({})),
+    "photos_with_thing": (photos_with_thing, "Photos tagged as one thing.",
+                          _schema({"tag": _STR, "limit": {**_INT, "default": 100}}, ["tag"])),
     "photo_stats": (photo_stats, "Counts by year, by kind, and starred.", _schema({})),
     "get_photo": (get_photo, "Full details of one photo by id.", _schema({"id": _INT}, ["id"])),
     "run_action": (run_action, "Ask the running app to perform an action on files (needs the app open).",
