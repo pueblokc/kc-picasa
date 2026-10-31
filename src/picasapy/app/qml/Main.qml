@@ -14,6 +14,8 @@ ApplicationWindow {
     KcStatusToast {}
     KcOnThisDayDialog { id: kcOnThisDayDialog }
     function openKcOnThisDay() { kcOnThisDayDialog.open() }
+    KcRestoreDialog { id: kcRestoreDialog }
+    function openKcRestore() { kcRestoreDialog.open() }
     // A kivont komponens mellett a főablak korábbi QML-neve megmarad.
     property alias shortcutSave: mainWindowCommands.exportShortcutSave
     property alias errorBanner: mainWindowPeripheralLayers.exportErrorBanner

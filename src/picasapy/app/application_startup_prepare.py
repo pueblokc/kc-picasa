@@ -158,6 +158,8 @@ def _startup_step_prepare_index_and_main_controller(state):
     cache_dir = storage_bootstrap.cache_dir
     config_dir = storage_bootstrap.config_dir
     data_dir.mkdir(parents=True, exist_ok=True)
+    from .kc_backup import apply_pending_restore
+    apply_pending_restore(data_dir)
     # #449: hibanapló — a WARNING és súlyosabb üzenetek fájlba is mennek,
     # hogy adatbázis-hiba esetén legyen mit felajánlani megtekintésre
     error_log = install_error_log(data_dir) or error_log_path(data_dir)

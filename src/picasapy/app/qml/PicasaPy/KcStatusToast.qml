@@ -19,4 +19,8 @@ Popup {
         target: kcTools
         function onMessage(message) { toast.message = message; toast.open(); hideTimer.restart() }
     }
+    Connections {
+        target: kcBackup
+        function onMessage(message) { toast.message = message; toast.open(); hideTimer.restart() }
+    }
 }
