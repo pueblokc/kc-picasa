@@ -16,7 +16,7 @@ import sys
 from PySide6.QtCore import Property, QObject, QSettings, Signal, Slot
 from PySide6.QtGui import QGuiApplication
 
-KC_VERSION = "0.1.0"
+KC_VERSION = "0.2.0"
 KC_APP_NAME = "KC Picasa"
 KC_BRAND_LABEL = "KCCS · mypueblopc.com"
 KC_REPO_URL = "https://github.com/pueblokc/kc-picasa"
