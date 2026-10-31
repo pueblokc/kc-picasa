@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Dialog {
+KcDialog {
     id: dialog
     objectName: "kcRestoreDialog"
     modal: true
@@ -13,7 +13,6 @@ Dialog {
     property var entries: []
     property string selectedPath: ""
     onAboutToShow: { entries = kcBackup.backups(); selectedPath = "" }
-    background: Rectangle { color: "#151b1f"; border.color: "#28323a"; radius: 10 }
     contentItem: ColumnLayout {
         spacing: 12
         Text { text: "Restore Index"; color: "#cfc9bb"; font.pixelSize: 22 }
@@ -27,26 +26,34 @@ Dialog {
                 text: modelData.modified + "  ·  " + (modelData.size / 1048576).toFixed(1) + " MB"
                 highlighted: dialog.selectedPath === modelData.path
                 onClicked: dialog.selectedPath = modelData.path
+                contentItem: Text { text: parent.text; color: Theme.ink; verticalAlignment: Text.AlignVCenter }
+                background: Rectangle { color: parent.highlighted ? "#31564f" : Theme.contentPanel; border.color: Theme.chromeBorder; radius: 4 }
             }
         }
         Text { text: "Keep the current index as index.db.before-restore-..."; color: "#4d8f85"; wrapMode: Text.WordWrap; Layout.fillWidth: true }
         RowLayout {
             Layout.alignment: Qt.AlignRight
-            Button { text: "Cancel"; onClicked: dialog.close() }
-            Button {
-                text: "Confirm restore"; enabled: dialog.selectedPath.length > 0
+            KcButton { text: "Cancel"; onClicked: dialog.close() }
+            KcButton {
+                text: "Confirm restore"; accent: true; enabled: dialog.selectedPath.length > 0
                 onClicked: confirm.open()
             }
         }
     }
-    Dialog {
+    KcDialog {
         id: confirm
         anchors.centerIn: parent
         modal: true
         title: "Confirm index restore"
-        standardButtons: Dialog.Yes | Dialog.No
-        onAccepted: { kcBackup.restore(dialog.selectedPath); dialog.close() }
-        contentItem: Text { text: "Restore the selected index on next launch?"; color: "#cfc9bb"; padding: 20 }
-        background: Rectangle { color: "#1c2328"; border.color: "#28323a" }
+        width: 390; height: 180
+        contentItem: ColumnLayout {
+            Text { text: "Restore the selected index on next launch?"; color: Theme.ink; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+            Item { Layout.fillHeight: true }
+            RowLayout {
+                Layout.alignment: Qt.AlignRight
+                KcButton { text: "Cancel"; onClicked: confirm.close() }
+                KcButton { text: "Restore"; accent: true; onClicked: { kcBackup.restore(dialog.selectedPath); confirm.close(); dialog.close() } }
+            }
+        }
     }
 }

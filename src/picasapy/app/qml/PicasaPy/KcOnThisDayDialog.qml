@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Dialog {
+KcDialog {
     id: dialog
     objectName: "kcOnThisDayDialog"
     property var photos: []
@@ -12,7 +12,6 @@ Dialog {
     height: 570
     anchors.centerIn: parent
     onAboutToShow: photos = kcMemories.today()
-    background: Rectangle { color: "#151b1f"; border.color: "#28323a"; radius: 10 }
     contentItem: ColumnLayout {
         spacing: 12
         Text { text: "On This Day"; color: "#cfc9bb"; font.pixelSize: 22 }
@@ -42,6 +41,6 @@ Dialog {
                 }
             }
         }
-        Button { text: "Close"; onClicked: dialog.close(); Layout.alignment: Qt.AlignRight }
+        KcButton { text: "Close"; onClicked: dialog.close(); Layout.alignment: Qt.AlignRight }
     }
 }

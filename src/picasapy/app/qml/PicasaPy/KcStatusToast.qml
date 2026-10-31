@@ -20,10 +20,10 @@ Popup {
         Row {
             visible: toast.projectActions
             spacing: 4
-            Button { text: "Open folder"; onClicked: kcProjects.openFolder() }
-            Button { text: "Send to Phone"; onClicked: kcTools.share("phone", [kcProjects.output]) }
-            Button { text: "Put on Drop"; onClicked: kcTools.share("drop", [kcProjects.output]) }
-            Button { text: "Get Share Link"; onClicked: kcTools.share("link", [kcProjects.output]) }
+            KcButton { text: "Open folder"; onClicked: kcProjects.openFolder() }
+            KcButton { text: "Send to Phone"; onClicked: kcTools.share("phone", [kcProjects.output]) }
+            KcButton { text: "Put on Drop"; onClicked: kcTools.share("drop", [kcProjects.output]) }
+            KcButton { text: "Get Share Link"; onClicked: kcTools.share("link", [kcProjects.output]) }
         }
     }
     Timer { id: hideTimer; interval: 4500; onTriggered: toast.close() }
