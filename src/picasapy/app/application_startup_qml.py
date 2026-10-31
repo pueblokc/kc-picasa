@@ -107,6 +107,8 @@ def _startup_step_register_qml_context(state):
     kc_ui_controller = KcUiController(parent=app)
     engine.rootContext().setContextProperty("kcUi", kc_ui_controller)
     state.kc_ui_controller = kc_ui_controller
+    from .kc_api_hook import start_kc_api
+    state.kc_api = start_kc_api(data_dir)
     from .kc_tools import KcToolsController
     kc_tools = KcToolsController(parent=app)
     kc_tools.connect_worker_signals()
