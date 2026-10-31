@@ -329,3 +329,8 @@ KcProjectsMenu 1.0 KcProjectsMenu.qml
 KcThingsDialog 1.0 KcThingsDialog.qml
 KcProjectDialog 1.0 KcProjectDialog.qml
 KcRestoreDialog 1.0 KcRestoreDialog.qml
+KcDialog 1.0 KcDialog.qml
+KcButton 1.0 KcButton.qml
+KcTextField 1.0 KcTextField.qml
+KcComboBox 1.0 KcComboBox.qml
+KcPopupMenu 1.0 KcPopupMenu.qml

@@ -48,6 +48,7 @@ MenuItem {
     // És NEM jár olyan parancsra, ami az eredetiben létezik, csak nálunk
     // hibás — az jegy, nem jelölés.
     property bool sajat: false
+    property bool kc: false // KC: retain the audit marker without link-blue styling
 
     // A pötty/szín önmagában nem hordozhat információt (színvakság), ezért
     // a buboréksúgó KÖTELEZŐ, nem díszítés — a döntéslap így írja elő.
@@ -90,7 +91,7 @@ MenuItem {
             ? control.indicator.width + control.spacing : 0
         readonly property real nyilHely: control.subMenu && control.arrow
             ? control.arrow.width + control.spacing : 0
-        leftPadding: !control.mirrored ? jeloloHely : nyilHely
+        leftPadding: control.kc ? 24 : (!control.mirrored ? jeloloHely : nyilHely) // KC: align checked and plain rows
         text: control.text
         font: control.font
         // a nyugdíjazott tétel ugyanúgy halvány, mint a helyfoglaló — a
@@ -98,7 +99,7 @@ MenuItem {
         //: #3537: a hívó által letiltott tétel is szürke
         color: control.placeholder || control.retired || !control.enabled
             ? Theme.textGray
-            : (control.sajat ? Theme.linkBlue : Theme.ink)
+            : (control.sajat && !control.kc ? Theme.linkBlue : Theme.ink) // KC
         // hely a jobb szélen a placeholder-pontnak, hogy ne fedjék egymást,
         // és (#1750) az almenü-nyílnak — tükrözött elrendezésben a jelölőnek
         rightPadding: (control.placeholder ? placeholderDot.width + 8 : 0)
