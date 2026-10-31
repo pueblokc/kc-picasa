@@ -8,7 +8,7 @@ PicasaMenu {
     KcShareMenu { bar: menu.bar }
     KcTextMenu {}
     KcProjectsMenu { bar: menu.bar }
-    MenuItem { objectName: "kcThings"; text: "Things"; sajat: true; placeholder: false; onTriggered: if (menu.bar && menu.bar.kcHostWindow) menu.bar.kcHostWindow.openKcThings() }
+    PicasaMenuItem { objectName: "kcThings"; text: "Things"; sajat: true; placeholder: false; onTriggered: if (menu.bar && menu.bar.kcHostWindow) menu.bar.kcHostWindow.openKcThings() }
     PicasaMenuItem {
         objectName: "kcSmartSearch"; text: "Smart Search..."; sajat: true; placeholder: false
         onTriggered: if (menu.bar && menu.bar.kcHostWindow) menu.bar.kcHostWindow.openKcSmartSearch()
@@ -19,7 +19,7 @@ PicasaMenu {
     }
     PicasaMenuItem {
         objectName: "kcSmartIndexing"; text: "AI indexing on"; checkable: true; sajat: true; placeholder: false
-        checked: kcSmart.enabled
+        checked: kcSmart && kcSmart.enabled
         onTriggered: kcSmart.setEnabled(checked)
     }
     PicasaMenuItem {

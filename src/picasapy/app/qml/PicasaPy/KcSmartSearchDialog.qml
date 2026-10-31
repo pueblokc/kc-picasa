@@ -24,12 +24,12 @@ Dialog {
             }
             Button { text: "Search"; onClicked: kcSmart.search(query.text) }
         }
-        Text { text: kcSmart.status; color: "#cfc9bb" }
+        Text { text: kcSmart ? kcSmart.status : ""; color: "#cfc9bb" }
         GridView {
             Layout.fillWidth: true; Layout.fillHeight: true
             clip: true
             cellWidth: 150; cellHeight: 150
-            model: kcSmart.results
+            model: kcSmart ? kcSmart.results : []
             delegate: Rectangle {
                 width: 142; height: 142; color: "#1c2328"; radius: 5
                 Column {
@@ -45,7 +45,7 @@ Dialog {
         RowLayout {
             Layout.fillWidth: true
             Button { text: "Update Index"; onClicked: kcSmart.updateIndex() }
-            Button { text: "Cancel Indexing"; enabled: kcSmart.indexing; onClicked: kcSmart.cancel() }
+            Button { text: "Cancel Indexing"; enabled: kcSmart && kcSmart.indexing; onClicked: kcSmart.cancel() }
             Item { Layout.fillWidth: true }
             Button { text: "Close"; onClicked: dialog.close() }
         }

@@ -43,10 +43,10 @@ Dialog {
             ComboBox { id: styleField; model: ["polaroid", "filmstrip", "card", "matte", "postcard"] }
         }
         Item { Layout.fillHeight: true }
-        Text { text: kcProjects.busy ? "Rendering in background..." : "Saves to Pictures/KC Projects"; color: "#4d8f85" }
+        Text { text: kcProjects && kcProjects.busy ? "Rendering in background..." : "Saves to Pictures/KC Projects"; color: "#4d8f85" }
         RowLayout {
             Button {
-                text: "Create"; enabled: !kcProjects.busy
+                text: "Create"; enabled: kcProjects && !kcProjects.busy
                 onClicked: {
                     var opts = {title: titleField.text, size: sizeField.currentText,
                                 style: styleField.currentText, year: yearField.value}
@@ -54,7 +54,7 @@ Dialog {
                     kcProjects.create(dialog.project, dialog.photos, opts)
                 }
             }
-            Button { text: "Cancel render"; enabled: kcProjects.busy; onClicked: kcProjects.cancel() }
+            Button { text: "Cancel render"; enabled: kcProjects && kcProjects.busy; onClicked: kcProjects.cancel() }
             Button { text: "Close"; onClicked: dialog.close() }
         }
     }

@@ -339,6 +339,14 @@ def _build_qml_app(qt_app, tmp_path):
     startup_status = StartupStatus()
     startup_status.finish()
     engine.rootContext().setContextProperty("startupStatus", startup_status)
+    # KC dialogs bind these controllers while the app fixture loads.
+    from picasapy.app.kc_smart_ui import KcSmartController
+    from picasapy.app.kc_projects import KcProjectsController
+
+    kc_smart = KcSmartController(tmp_path)
+    kc_projects = KcProjectsController(tmp_path, output_dir=tmp_path / "projects")
+    engine.rootContext().setContextProperty("kcSmart", kc_smart)
+    engine.rootContext().setContextProperty("kcProjects", kc_projects)
     engine.load(str(app_module._APP_DIR / "qml" / "Main.qml"))
     assert engine.rootObjects(), "Main.qml betöltése sikertelen"
     window = engine.rootObjects()[0]

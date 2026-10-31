@@ -360,7 +360,7 @@ def _alak() -> dict[str, list[str]]:
     verem: list[int] = []
     menuk: list[tuple[str, list[str]]] = []
     minta = (
-        r"((?:Picasa)?Menu\s*\{|PicasaMenuItem\s*\{|MenuItem\s*\{"
+        r"((?<![A-Za-z0-9_])(?:Picasa)?Menu\s*\{|PicasaMenuItem\s*\{|MenuItem\s*\{"
         r"|MenuSeparator\s*\{\s*\}|\{|\})"
     )
     for talalat in re.finditer(minta, forras):

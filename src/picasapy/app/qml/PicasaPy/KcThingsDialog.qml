@@ -16,7 +16,7 @@ Dialog {
         ScrollView {
             Layout.fillWidth: true; Layout.fillHeight: true
             ListView {
-                model: kcSmart.things
+                model: kcSmart ? kcSmart.things : []
                 delegate: Button {
                     required property var modelData
                     width: ListView.view.width
