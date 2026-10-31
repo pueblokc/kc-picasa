@@ -107,6 +107,20 @@ def _startup_step_register_qml_context(state):
     kc_ui_controller = KcUiController(parent=app)
     engine.rootContext().setContextProperty("kcUi", kc_ui_controller)
     state.kc_ui_controller = kc_ui_controller
+    from .kc_api_hook import start_kc_api
+    state.kc_api = start_kc_api(data_dir)
+    from .kc_tools import KcToolsController
+    kc_tools = KcToolsController(parent=app)
+    kc_tools.connect_worker_signals()
+    engine.rootContext().setContextProperty("kcTools", kc_tools)
+    state.kc_tools_controller = kc_tools
+    from .kc_memories import KcMemoriesController
+    engine.rootContext().setContextProperty("kcMemories", KcMemoriesController(data_dir / "index.db", app))
+    from .kc_backup import KcBackupController
+    kc_backup = KcBackupController(data_dir, app)
+    engine.rootContext().setContextProperty("kcBackup", kc_backup)
+    state.kc_backup_controller = kc_backup
+    kc_backup.automatic()
     engine.rootContext().setContextProperty("screenCaptureController", screen_capture_controller)
     engine.rootContext().setContextProperty("cameraCaptureController", camera_capture_controller)
     engine.rootContext().setContextProperty("editController", edit_controller)

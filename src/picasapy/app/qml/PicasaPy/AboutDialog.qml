@@ -28,6 +28,7 @@ Dialog {
                   + "\nGPL-3.0 · github.com/sanchomuzax/PicasaPy"
                   + "\nFork: github.com/pueblokc/kc-picasa"
                   + "\n\nZoom: Ctrl+= bigger · Ctrl+- smaller · Ctrl+0 reset (View ▸ Zoom)"
+                  + "\nKC: device sharing · On This Day · verified index backups"
             color: Theme.ink
             font.pixelSize: Theme.fontSize
             horizontalAlignment: Text.AlignHCenter

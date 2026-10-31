@@ -1,0 +1,7 @@
+{
+  "tailscale_exe": "C:/path/to/tailscale.exe",
+  "phone_device": "your-phone-device",
+  "drop_python": "C:/path/to/python.exe",
+  "drop_script": "C:/path/to/drop.py",
+  "secureshare_script": "C:/path/to/secureshare.py"
+}

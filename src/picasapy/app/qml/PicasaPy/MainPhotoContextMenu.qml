@@ -5,6 +5,7 @@ import PicasaPy
 PhotoContextMenu {
     id: root
     required property var hostWindow
+    KcShareMenu { hostWindow: root.hostWindow }
     required property var hostController
     required property var hostFileOpsController
     required property var hostFileOpsDialogs
