@@ -16,11 +16,11 @@ Popup {
     contentItem: Text { text: toast.message; color: "#cfc9bb"; wrapMode: Text.Wrap; font.pixelSize: 14 }
     Timer { id: hideTimer; interval: 4500; onTriggered: toast.close() }
     Connections {
-        target: kcTools
+        target: typeof kcTools !== "undefined" ? kcTools : null
         function onMessage(message) { toast.message = message; toast.open(); hideTimer.restart() }
     }
     Connections {
-        target: kcBackup
+        target: typeof kcBackup !== "undefined" ? kcBackup : null
         function onMessage(message) { toast.message = message; toast.open(); hideTimer.restart() }
     }
 }

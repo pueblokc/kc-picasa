@@ -26,7 +26,7 @@ Dialog {
                 spacing: 6
                 Text {
                     visible: index === 0 || modelData.year !== dialog.photos[index - 1].year
-                    text: modelData.yearsAgo + " years ago — " + modelData.year
+                    text: modelData.yearsAgo + (modelData.yearsAgo === 1 ? " year ago — " : " years ago — ") + modelData.year
                     color: "#4d8f85"; font.pixelSize: 17
                 }
                 Row {
