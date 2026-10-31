@@ -109,7 +109,7 @@ ApplicationWindow {
             kilepesDialog.askExit()
         }
     }
-    title: "PicasaPy"
+    title: "KC Picasa"
     color: Theme.lightboxBg
 
     // #28: a téma a Theme-tokenekből jön, azok pedig a controller
