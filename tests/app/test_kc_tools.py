@@ -16,7 +16,7 @@ def _config(tmp_path):
 
 def test_phone_and_drop_argv(tmp_path, monkeypatch):
     calls = []
-    monkeypatch.setattr(kc_tools, "run_command", lambda argv: (calls.append(argv) or
+    monkeypatch.setattr(kc_tools, "run_command", lambda argv, timeout=None: (calls.append(argv) or
                          subprocess.CompletedProcess(argv, 0, "", "")))
     controller = kc_tools.KcToolsController(config_file=_config(tmp_path))
     controller._share_worker("phone", ["a.jpg", "b.raw"])
@@ -38,7 +38,7 @@ def test_link_extraction_and_missing_link(tmp_path, monkeypatch):
         "upload": "Upload OK!\n",
         "get": "Title: x\n  >>> SEND THIS LINK (password built in, no typing): https://example.test/abc?k=1\n",
     }
-    monkeypatch.setattr(kc_tools, "run_command", lambda argv: (calls.append(argv) or
+    monkeypatch.setattr(kc_tools, "run_command", lambda argv, timeout=None: (calls.append(argv) or
                          subprocess.CompletedProcess(argv, 0, outputs[argv[2]], "")))
     controller._share_worker("link", ["a.jpg", "b.raw"])
     assert calls == [["python", "share.py", "file", "KC Picasa - 2 photos"],
@@ -66,3 +66,21 @@ def test_windows_runner_hides_window(monkeypatch):
 def test_missing_config_disables_items(tmp_path):
     controller = kc_tools.KcToolsController(config_file=tmp_path / "missing.json")
     assert all(not controller.configured(action) for action in ("phone", "drop", "link"))
+
+
+def test_stuck_phone_send_times_out_with_clean_message(tmp_path, monkeypatch):
+    """A phone that never accepts the Taildrop must end the share, not leave it busy forever."""
+    seen = {}
+
+    def fake_run(argv, **kwargs):
+        seen.update(kwargs)
+        raise subprocess.TimeoutExpired(argv, kwargs["timeout"], stderr="\x1b[K# warning: phone is not replying")
+
+    monkeypatch.setattr(kc_tools.subprocess, "run", fake_run)
+    messages = []
+    controller = kc_tools.KcToolsController(config_file=_config(tmp_path))
+    controller._finished.connect(messages.append)
+    controller._share_worker("phone", ["a.jpg"])
+    assert seen["timeout"] == kc_tools.PHONE_TIMEOUT_S
+    assert messages == [f"KC share failed: timed out after {kc_tools.PHONE_TIMEOUT_S} s"]
+    assert "\x1b" not in messages[0]

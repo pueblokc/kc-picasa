@@ -29,15 +29,23 @@ def read_config(path: Path | None = None) -> dict[str, str]:
     return {key: value for key, value in data.items() if key in CONFIG_FIELDS and isinstance(value, str) and value}
 
 
-def run_command(argv: list[str]) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(argv, capture_output=True, text=True, check=False,
-                          creationflags=CREATE_NO_WINDOW if sys.platform == "win32" else 0)
+COMMAND_TIMEOUT_S = 900  # big Drop/SecureShare uploads
+PHONE_TIMEOUT_S = 180  # a phone that never accepts the Taildrop ends here instead of hanging
 
 
-def _run_checked(argv: list[str]) -> subprocess.CompletedProcess[str]:
-    result = run_command(argv)
+def run_command(argv: list[str], timeout: float = COMMAND_TIMEOUT_S) -> subprocess.CompletedProcess[str]:
+    try:
+        return subprocess.run(argv, capture_output=True, text=True, check=False, timeout=timeout,
+                              creationflags=CREATE_NO_WINDOW if sys.platform == "win32" else 0)
+    except subprocess.TimeoutExpired:
+        return subprocess.CompletedProcess(argv, 124, "", f"timed out after {int(timeout)} s")
+
+
+def _run_checked(argv: list[str], timeout: float = COMMAND_TIMEOUT_S) -> subprocess.CompletedProcess[str]:
+    result = run_command(argv, timeout)
     if result.returncode:
-        raise RuntimeError((result.stderr or result.stdout or "Command failed").strip()[-300:])
+        text = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", result.stderr or result.stdout or "Command failed")
+        raise RuntimeError(" ".join(text.split())[-300:])
     return result
 
 
@@ -98,7 +106,7 @@ class KcToolsController(QObject):
                 commands = []
             links = []
             for command in commands:
-                _run_checked(command)
+                _run_checked(command, PHONE_TIMEOUT_S if action == "phone" else COMMAND_TIMEOUT_S)
             if action == "link":
                 links.append(self._secureshare_link(cfg, paths))
             if links:
