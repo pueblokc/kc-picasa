@@ -14,6 +14,11 @@ Item {
             acceptedDevices: PointerDevice.Mouse
                              | PointerDevice.TouchPad
             onWheel: function(event) {
+                if (event.modifiers & Qt.ControlModifier) {
+                    if (event.angleDelta.y > 0) kcUi.zoomIn()
+                    else if (event.angleDelta.y < 0) kcUi.zoomOut()
+                    return
+                }
                 feed.wheelStep(event.angleDelta.y)
             }
         }
