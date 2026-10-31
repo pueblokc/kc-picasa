@@ -8,6 +8,19 @@ PicasaMenu {
     KcShareMenu { bar: menu.bar }
     KcTextMenu {}
     PicasaMenuItem {
+        objectName: "kcSmartSearch"; text: "Smart Search..."; sajat: true; placeholder: false
+        onTriggered: if (menu.bar && menu.bar.kcHostWindow) menu.bar.kcHostWindow.openKcSmartSearch()
+    }
+    PicasaMenuItem {
+        objectName: "kcSmartIndex"; text: "AI: Update Photo Index"; sajat: true; placeholder: false
+        onTriggered: kcSmart.updateIndex()
+    }
+    PicasaMenuItem {
+        objectName: "kcSmartIndexing"; text: "AI indexing on"; checkable: true; sajat: true; placeholder: false
+        checked: kcSmart.enabled
+        onTriggered: kcSmart.setEnabled(checked)
+    }
+    PicasaMenuItem {
         text: "Reduce Motion"; checkable: true; sajat: true; placeholder: false
         checked: typeof kcUi !== "undefined" && kcUi && kcUi.reduceMotion
         onTriggered: kcUi.setReduceMotion(checked)

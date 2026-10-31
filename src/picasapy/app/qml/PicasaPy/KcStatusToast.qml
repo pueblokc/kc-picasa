@@ -23,4 +23,8 @@ Popup {
         target: typeof kcBackup !== "undefined" ? kcBackup : null
         function onMessage(message) { toast.message = message; toast.open(); hideTimer.restart() }
     }
+    Connections {
+        target: typeof kcSmart !== "undefined" ? kcSmart : null
+        function onMessage(message) { toast.message = message; toast.open(); hideTimer.restart() }
+    }
 }

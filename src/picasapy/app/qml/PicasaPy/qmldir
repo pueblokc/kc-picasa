@@ -324,4 +324,5 @@ KcTextMenu 1.0 KcTextMenu.qml
 KcShareMenu 1.0 KcShareMenu.qml
 KcStatusToast 1.0 KcStatusToast.qml
 KcOnThisDayDialog 1.0 KcOnThisDayDialog.qml
+KcSmartSearchDialog 1.0 KcSmartSearchDialog.qml
 KcRestoreDialog 1.0 KcRestoreDialog.qml

@@ -114,6 +114,8 @@ def _startup_step_register_qml_context(state):
     kc_tools.connect_worker_signals()
     engine.rootContext().setContextProperty("kcTools", kc_tools)
     state.kc_tools_controller = kc_tools
+    from .kc_smart_ui import KcSmartController  # KC
+    kc_smart = KcSmartController(data_dir, app); engine.rootContext().setContextProperty("kcSmart", kc_smart); controller.syncFinished.connect(kc_smart.scanSettled); kc_smart.scanSettled()  # KC
     from .kc_memories import KcMemoriesController
     engine.rootContext().setContextProperty("kcMemories", KcMemoriesController(data_dir / "index.db", app))
     from .kc_backup import KcBackupController

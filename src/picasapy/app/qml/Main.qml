@@ -14,6 +14,9 @@ ApplicationWindow {
     KcStatusToast {}
     KcOnThisDayDialog { id: kcOnThisDayDialog }
     function openKcOnThisDay() { kcOnThisDayDialog.open() }
+    KcSmartSearchDialog { id: kcSmartSearchDialog }
+    function openKcSmartSearch() { kcSmartSearchDialog.open() }
+    Shortcut { sequence: "Ctrl+Shift+F"; onActivated: window.openKcSmartSearch() }
     KcRestoreDialog { id: kcRestoreDialog }
     function openKcRestore() { kcRestoreDialog.open() }
     // A kivont komponens mellett a főablak korábbi QML-neve megmarad.
