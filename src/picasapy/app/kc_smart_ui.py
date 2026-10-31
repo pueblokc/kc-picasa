@@ -110,6 +110,9 @@ class KcSmartController(QObject):
                 kernel.SetThreadPriority(kernel.GetCurrentThread(), -1)
             index = self._index_factory(self._data_dir, sleep_s=0.25)
             stats = index.update(lambda done, total: self._progress.emit(done, total), self._stop)
+            if not stats["stopped"] and not self._stop.is_set():
+                from .kc_things import update_things
+                update_things(index)
             self._updateDone.emit(stats)
         except Exception as exc:  # noqa: BLE001
             self._updateDone.emit(exc)
@@ -163,3 +166,17 @@ class KcSmartController(QObject):
             self._status = f"{len(outcome)} matches" if outcome else ("No strong matches" if had_hits else "No indexed photos yet")
         self.resultsChanged.emit()
         self.statusChanged.emit()
+
+    @Slot(str)
+    def showThing(self, tag: str) -> None:
+        from .kc_things import photos_with_thing
+        self._results = result_cards([(r["path"], r["score"])
+                                      for r in photos_with_thing(self._data_dir, tag)])
+        self._status = f"{tag}: {len(self._results)} photos"
+        self.resultsChanged.emit()
+        self.statusChanged.emit()
+
+    @Property("QVariantList", notify=resultsChanged)
+    def things(self) -> list[dict]:
+        from .kc_things import list_things
+        return list_things(self._data_dir)
