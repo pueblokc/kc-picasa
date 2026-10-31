@@ -30,8 +30,8 @@ STYLES = ("polaroid", "filmstrip", "card", "matte", "postcard")
 def _polaroid(img, size, caption, ground, text, accent) -> Image.Image:
     side = size
     pad = round(side * 0.05)
-    paper = (232, 228, 216) if sum(ground) < 300 else (250, 248, 242)
-    ink = (52, 56, 60)
+    paper = (250, 248, 242) if sum(ground) > 500 else ground
+    ink = (52, 56, 60) if sum(ground) > 500 else text
     ph = contain(img, side - 2 * pad, side - 2 * pad)
     pw, phh = ph.size
     frame_w = max(pw, round(side * 0.7)) + 2 * pad
@@ -124,8 +124,8 @@ def _postcard(img, size, message, ground, text, accent, date_line) -> Image.Imag
     W = size * 3 // 2
     H = size
     pad = round(size * 0.04)
-    paper = (232, 228, 216)
-    ink = (52, 56, 60)
+    paper = (250, 248, 242) if sum(ground) > 500 else ground
+    ink = (52, 56, 60) if sum(ground) > 500 else text
     card = Image.new("RGB", (W, H), paper)
     d = ImageDraw.Draw(card)
     # photo side (left) / message side (right)
@@ -169,9 +169,10 @@ def make_frame(
     date: str | None = None,
     location: str | None = None,
     size: int = 1200,
-    ground: str = GROUND,
+    ground: str = "#1c2328",
     text: str = TEXT,
     accent: str = ACCENT,
+    classic: bool = False,
 ) -> Path:
     """Wrap photo(s) in a frame. `style`: polaroid, filmstrip (3-5 photos),
     card, matte, postcard. `date` defaults to the photo's EXIF date for matte
@@ -181,6 +182,8 @@ def make_frame(
         raise ValueError(f"style must be one of {STYLES}")
     if not photos:
         raise ValueError("frames needs at least one photo")
+    if classic:
+        ground, text = "#f0eadd", "#34383c"
     g, t, a = rgb(ground), rgb(text), rgb(accent)
     maxside = size * 2
     if style == "filmstrip":

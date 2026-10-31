@@ -184,7 +184,15 @@ def test_frames_single(photos, tmp_path, style):
                      caption="Summer 2026", location="Pueblo, CO", size=300)  # fmt: skip
     with Image.open(out) as im:
         assert im.format == "PNG" and im.width > 300 and im.height > 200
-        assert im.getpixel((2, 2)) == _common.rgb(_common.GROUND)  # dark ground
+        assert im.getpixel((2, 2)) == _common.rgb("#1c2328")  # KC dark ground
+
+
+@pytest.mark.parametrize("style", ["polaroid", "postcard"])
+def test_frames_classic_palette(photos, tmp_path, style):
+    out = make_frame([photos[1]], tmp_path / f"classic-{style}.png", style=style,
+                     size=300, classic=True)
+    with Image.open(out) as im:
+        assert im.getpixel((2, 2)) == _common.rgb("#f0eadd")
 
 
 def test_frames_orientation_and_jpeg(photos, tmp_path):

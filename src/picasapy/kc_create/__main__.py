@@ -42,6 +42,8 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--music", type=Path)
 
     p = add("frames", "polaroid / filmstrip / card / matte / postcard")
+    p.set_defaults(ground="#1c2328")
+    p.add_argument("--classic", action="store_true", help="cream paper and dark ink")
     p.add_argument("--style", default="polaroid",
                    choices=["polaroid", "filmstrip", "card", "matte", "postcard"])  # fmt: skip
     p.add_argument("--caption")
@@ -103,7 +105,7 @@ def main(argv: list[str] | None = None) -> int:
         from .frames import make_frame
 
         res = make_frame(photos, a.out, style=a.style, caption=a.caption, date=a.date,
-                         location=a.location, size=a.size, **colours)  # fmt: skip
+                         location=a.location, size=a.size, classic=a.classic, **colours)  # fmt: skip
     elif a.project == "calendar":
         from .calendar import make_calendar
 
