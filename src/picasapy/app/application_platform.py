@@ -105,6 +105,10 @@ def _window_icon_path(platform: str = sys.platform) -> Path:
     (a taskbar 16–32 px-es változatai előre renderelve, nem futásidejű
     PNG-skálázással — az hol késleltetve, hol egyáltalán nem jelent meg),
     máshol a 256 px-es PNG."""
+    # KC Picasa: our own icon when it ships with the package, else the upstream one.
+    kc = _app._APP_DIR / "assets" / ("kc-icon.ico" if platform == "win32" else "kc-icon.png")
+    if kc.is_file():
+        return kc
     if platform == "win32":
         return _app._APP_DIR / "assets" / "icon.ico"
     return _app._APP_DIR / "assets" / "icon.png"

@@ -16,12 +16,13 @@ from picasapy.app.appearance_controller import (
 
 
 class TestCoerceDarkFlag:
-    @pytest.mark.parametrize("value", [True, "true", "1", "TRUE", " true "])
-    def test_truthy_values(self, value):
+    # KC Picasa: dark is the default; missing/unreadable values stay dark.
+    @pytest.mark.parametrize("value", [True, "true", "1", "TRUE", " true ", None, "", "hupak", 3.5])
+    def test_dark_or_unknown_values(self, value):
         assert coerce_dark_flag(value) is True
 
-    @pytest.mark.parametrize("value", [None, False, "false", "0", "", "hupak", 3.5])
-    def test_falsy_or_invalid_values(self, value):
+    @pytest.mark.parametrize("value", [False, "false", "0", " FALSE "])
+    def test_explicit_light_values(self, value):
         assert coerce_dark_flag(value) is False
 
 
@@ -48,27 +49,27 @@ class TestAppearanceMixin:
         )
         return _Probe(settings)
 
-    def test_default_is_light(self, controller):
-        assert controller.darkTheme is False
-
-    def test_set_dark_persists(self, controller):
-        controller.setDarkTheme(True)
+    def test_default_is_dark(self, controller):
         assert controller.darkTheme is True
-        assert coerce_dark_flag(controller._get_settings().value(DARK_THEME_KEY))
+
+    def test_set_light_persists(self, controller):
+        controller.setDarkTheme(False)
+        assert controller.darkTheme is False
+        assert not coerce_dark_flag(controller._get_settings().value(DARK_THEME_KEY))
 
     def test_toggle_flips_both_ways(self, controller):
         controller.toggleDarkTheme()
-        assert controller.darkTheme is True
-        controller.toggleDarkTheme()
         assert controller.darkTheme is False
+        controller.toggleDarkTheme()
+        assert controller.darkTheme is True
 
     def test_signal_only_on_real_change(self, controller):
         seen = []
         controller.darkThemeChanged.connect(lambda: seen.append(controller.darkTheme))
-        controller.setDarkTheme(False)  # már világos — nincs jelzés
+        controller.setDarkTheme(True)  # already dark: no signal
         assert seen == []
-        controller.setDarkTheme(True)
-        assert seen == [True]
+        controller.setDarkTheme(False)
+        assert seen == [False]
 
     def test_restored_from_settings(self, qt_app, tmp_path):
         from PySide6.QtCore import QObject
@@ -87,13 +88,13 @@ class TestAppearanceMixin:
         path = str(tmp_path / "settings.ini")
         first = QSettings(path, QSettings.Format.IniFormat)
         probe = _Probe(first)
-        probe.setDarkTheme(True)
+        probe.setDarkTheme(False)
         first.sync()
 
         second = QSettings(path, QSettings.Format.IniFormat)
-        assert _Probe(second).darkTheme is True
+        assert _Probe(second).darkTheme is False
 
-    def test_broken_setting_falls_back_to_light(self, qt_app, tmp_path):
+    def test_broken_setting_falls_back_to_dark(self, qt_app, tmp_path):
         from PySide6.QtCore import QObject
 
         from picasapy.app.appearance_controller import AppearanceMixin
@@ -111,7 +112,7 @@ class TestAppearanceMixin:
             str(tmp_path / "settings.ini"), QSettings.Format.IniFormat
         )
         settings.setValue(DARK_THEME_KEY, "talán")
-        assert _Probe(settings).darkTheme is False
+        assert _Probe(settings).darkTheme is True
 
     def test_general_ui_settings_default_to_the_picasa_values(self, controller):
         assert controller.uiTransitionsEnabled is True

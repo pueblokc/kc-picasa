@@ -39,12 +39,13 @@ _FALSE_VALUES = ("false", "0")
 
 
 def coerce_dark_flag(value) -> bool:
-    """A mentett beállítás bool-lá alakítása; minden ismeretlen érték = világos."""
+    """KC Picasa: dark is the default. Only an explicit saved "false"/"0" means light;
+    missing or unreadable values fall back to dark (low-glare house style)."""
     if isinstance(value, bool):
         return value
     if isinstance(value, str):
-        return value.strip().lower() in _TRUE_VALUES
-    return False
+        return value.strip().lower() not in _FALSE_VALUES
+    return True
 
 
 def coerce_ui_preference_flag(value, default: bool) -> bool:

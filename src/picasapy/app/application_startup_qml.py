@@ -103,6 +103,10 @@ def _startup_step_register_qml_context(state):
     )
     app.aboutToQuit.connect(screen_capture_controller.shutdown)
     engine.rootContext().setContextProperty("controller", controller)
+    from .kc_ui import KcUiController
+    kc_ui_controller = KcUiController(parent=app)
+    engine.rootContext().setContextProperty("kcUi", kc_ui_controller)
+    state.kc_ui_controller = kc_ui_controller
     engine.rootContext().setContextProperty("screenCaptureController", screen_capture_controller)
     engine.rootContext().setContextProperty("cameraCaptureController", camera_capture_controller)
     engine.rootContext().setContextProperty("editController", edit_controller)

@@ -200,6 +200,9 @@ def _build_qml_app(qt_app, tmp_path):
         sync_tree(conn, lib)
 
     settings = QSettings(str(tmp_path / "settings.ini"), QSettings.Format.IniFormat)
+    # KC Picasa ships dark by default; upstream's Picasa-parity tests measure the
+    # light originals, so the harness starts light (dark default: test_kc_ui.py).
+    settings.setValue("view/darkTheme", "false")
     # A legtöbb app-teszt apró szintetikus képekkel a teljes modell viselkedését
     # vizsgálja; a Picasa-alapértékű kis-kép szűrést a saját #4346-os próba
     # teszi vissza bekapcsolttá.

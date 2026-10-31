@@ -285,6 +285,35 @@ PicasaMenu {
             })
         }
     }
+    // KC Picasa: whole-UI zoom (KC app playbook). Shortcuts live in Main.qml.
+    PicasaMenu {
+        objectName: "menuViewKcZoom"
+        title: (typeof kcUi !== "undefined" && kcUi)
+               ? qsTr("Zoom (%1%)").arg(kcUi.uiScalePercent) : qsTr("Zoom")
+        enabled: typeof kcUi !== "undefined" && kcUi !== null
+        MenuItem {
+            objectName: "menuViewKcZoomIn"
+            text: qsTr("Bigger   (Ctrl and =)")
+            onTriggered: kcUi.zoomIn()
+        }
+        MenuItem {
+            objectName: "menuViewKcZoomOut"
+            text: qsTr("Smaller   (Ctrl and -)")
+            onTriggered: kcUi.zoomOut()
+        }
+        MenuItem {
+            objectName: "menuViewKcZoomReset"
+            text: qsTr("Reset to 125%   (Ctrl+Shift+0)")
+            onTriggered: kcUi.zoomReset()
+        }
+        MenuSeparator {}
+        MenuItem {
+            objectName: "menuViewKcZoomRestart"
+            text: qsTr("Restart now to apply")
+            enabled: typeof kcUi !== "undefined" && kcUi && kcUi.restartNeeded
+            onTriggered: kcUi.restartApp()
+        }
+    }
     // #1774 (mérve): a Megjelenítési mód UGYANEBBEN a csoportban van,
     // mint a Színkezelés használata — nincs közte elválasztó.
     // #1575: a Megjelenítési mód almenü — 11 tétel + 4 elválasztó

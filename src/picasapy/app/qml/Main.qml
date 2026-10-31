@@ -170,6 +170,85 @@ ApplicationWindow {
         disabled.buttonText: Theme.textGray
     }
 
+    // KC Picasa: whole-UI zoom shortcuts and the "restart to apply" bar
+    // (KC app playbook). Ctrl+0 stays Picasa's right-panel toggle, so reset is Ctrl+Shift+0.
+    readonly property bool kcUiReady: typeof kcUi !== "undefined" && kcUi !== null
+    property bool kcZoomBarDismissed: false
+    Connections {
+        target: window.kcUiReady ? kcUi : null
+        function onUiScaleChanged() { window.kcZoomBarDismissed = false }
+    }
+    Shortcut {
+        objectName: "kcZoomInShortcut"
+        sequences: ["Ctrl+=", "Ctrl++"]
+        context: Qt.ApplicationShortcut
+        onActivated: if (window.kcUiReady) kcUi.zoomIn()
+    }
+    Shortcut {
+        objectName: "kcZoomOutShortcut"
+        sequence: "Ctrl+-"
+        context: Qt.ApplicationShortcut
+        onActivated: if (window.kcUiReady) kcUi.zoomOut()
+    }
+    Shortcut {
+        objectName: "kcZoomResetShortcut"
+        sequence: "Ctrl+Shift+0"
+        context: Qt.ApplicationShortcut
+        onActivated: if (window.kcUiReady) kcUi.zoomReset()
+    }
+    function kcRestart() {
+        if (controller && controller.backgroundWorkRunning()) {
+            kcZoomBarText.text = qsTr("Busy with a background job. Restart after it finishes.")
+            return
+        }
+        kcUi.restartApp()
+    }
+    Rectangle {
+        id: kcZoomBar
+        objectName: "kcZoomBar"
+        visible: window.kcUiReady && kcUi.restartNeeded && !window.kcZoomBarDismissed
+        z: 10000
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 18
+        width: kcZoomRow.implicitWidth + 28
+        height: kcZoomRow.implicitHeight + 16
+        radius: 10
+        color: "#1c2328"
+        border.color: "#28323a"
+        Row {
+            id: kcZoomRow
+            anchors.centerIn: parent
+            spacing: 12
+            Text {
+                id: kcZoomBarText
+                anchors.verticalCenter: parent.verticalCenter
+                text: window.kcUiReady
+                      ? qsTr("Zoom set to %1%. Restart KC Picasa to apply it.").arg(kcUi.uiScalePercent) : ""
+                color: "#cfc9bb"
+                font.pixelSize: Theme.fontSize + 1
+            }
+            Button {
+                objectName: "kcZoomRestartButton"
+                text: qsTr("Restart now")
+                Accessible.name: qsTr("Restart KC Picasa to apply the new zoom")
+                onClicked: window.kcRestart()
+                background: Rectangle { radius: 6; color: parent.down ? "#3d7068" : "#4d8f85" }
+                contentItem: Text { text: parent.text; color: "#f0ece2"; font.pixelSize: Theme.fontSize
+                                    horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+            }
+            Button {
+                objectName: "kcZoomLaterButton"
+                text: qsTr("Later")
+                Accessible.name: qsTr("Hide this message; the zoom applies next time")
+                onClicked: window.kcZoomBarDismissed = true
+                background: Rectangle { radius: 6; color: "#232b31"; border.color: "#3a464f" }
+                contentItem: Text { text: parent.text; color: "#cfc9bb"; font.pixelSize: Theme.fontSize
+                                    horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+            }
+        }
+    }
+
     // #985: a globális `controller` egy KONTEXTUS-property, a `CollagePanel`
     // viszont saját `controller` property-t deklarál (hogy a komponens-
     // tesztekben becserélhető legyen). A `controller: controller` sor ezért

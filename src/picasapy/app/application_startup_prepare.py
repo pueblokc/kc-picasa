@@ -13,6 +13,7 @@ from PySide6.QtGui import QGuiApplication, QIcon
 from picasapy.index import open_index
 from picasapy.scanner import read_exclude_folders
 from . import application as _app
+from . import kc_ui
 from .application_data import (
     _exclude_folders_path,
     _fuggo_koltozes_indulaskor,
@@ -72,11 +73,14 @@ def _startup_step_log_and_qt_setup(state):
     timeline.mark("Qt-stílus és platform-kapcsolók")
     progress_log.mark("Qt-stílus és platform-kapcsolók beállítva")
     progress_log.mark("Qt-alkalmazás létrehozása elkezdődött")
+    # KC Picasa: the saved whole-UI zoom has to be in QT_SCALE_FACTOR before the app exists.
+    state.kc_ui_scale = kc_ui.apply_ui_scale_env()
     app = QGuiApplication(argv)
     app.setApplicationName("PicasaPy")
     app.setOrganizationName("PicasaPy")
     try:
-        app.styleHints().setColorScheme(Qt.ColorScheme.Light)
+        app.styleHints().setColorScheme(
+            Qt.ColorScheme.Dark if kc_ui.saved_dark_theme() else Qt.ColorScheme.Light)
     except AttributeError:
         pass  # régebbi Qt: a paletta (Main.qml) így is világost kényszerít
     app.setDesktopFileName("picasapy")  # Wayland app_id → tálca-ikon

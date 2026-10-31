@@ -184,6 +184,9 @@ def _build_qml_app(
     # elszigetelt QSettings — a rendszer valós PicasaPy-beállításait ne
     # szennyezze a teszt (session/lastFolder, view/thumbCaption).
     settings = QSettings(str(tmp_path / "settings.ini"), QSettings.Format.IniFormat)
+    # KC Picasa ships dark by default; upstream's Picasa-parity tests measure the
+    # light originals, so the harness starts light (dark default: test_kc_ui.py).
+    settings.setValue("view/darkTheme", "false")
     # A kis tesztképeket használó régi QML-próbák teljes rácsot várnak; az
     # eredeti Picasa-alapértéket a #4346-os teszt külön, hiányzó kulccsal méri.
     if show_only_big_images is not None:

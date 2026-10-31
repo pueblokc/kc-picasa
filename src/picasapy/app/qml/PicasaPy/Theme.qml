@@ -57,12 +57,12 @@ QtObject {
         readonly property color brandSlate: "#4b5d5f"
 
         // ------- felület: semleges keret -------
-        readonly property color canvasBg: tema.dark ? "#232323" : "#eaeaea"       // vászon (app-háttér)
-        readonly property color contentPanel: tema.dark ? "#2e2e2e" : "#ffffff"   // tartalompanel (kártya)
-        readonly property color panelBg: tema.dark ? "#282828" : "#f3f3f3"        // oldalsáv (mappafa)
-        readonly property color chromeBg: tema.dark ? "#303030" : "#e2e2e2"       // eszköztár, sávok
-        readonly property color chromeBorder: tema.dark ? "#4a4a4a" : "#cdcdcd"   // vezérlők, keretek
-        readonly property color ink: tema.dark ? "#ececea" : "#1c1b19"            // tinta: szöveg, menük
+        readonly property color canvasBg: tema.dark ? "#0f1417" : "#eaeaea"       // vászon (app-háttér)
+        readonly property color contentPanel: tema.dark ? "#151b1f" : "#ffffff"   // tartalompanel (kártya)
+        readonly property color panelBg: tema.dark ? "#151b1f" : "#f3f3f3"        // oldalsáv (mappafa)
+        readonly property color chromeBg: tema.dark ? "#1c2328" : "#e2e2e2"       // eszköztár, sávok
+        readonly property color chromeBorder: tema.dark ? "#28323a" : "#cdcdcd"   // vezérlők, keretek
+        readonly property color ink: tema.dark ? "#cfc9bb" : "#1c1b19"            // tinta: szöveg, menük
 
         // ------- buboréksúgó: a KÉPERNYŐN MÉRT króm (#901) -------
         //
@@ -73,8 +73,8 @@ QtObject {
         //
         // ⚠️ A sötét mód értéke a MI döntésünk: az eredeti Picasának nincs
         // sötét témája, tehát ott nincs mit mérni.
-        readonly property color tooltipBg: tema.dark ? "#3a3a36" : "#f4f1e5"
-        readonly property color tooltipBorder: tema.dark ? "#5a584f" : "#b7b5ac"
+        readonly property color tooltipBg: tema.dark ? "#1c2328" : "#f4f1e5"
+        readonly property color tooltipBorder: tema.dark ? "#3a464f" : "#b7b5ac"
 
         // kompatibilitási aliasok (fokozatos átállás)
         readonly property color lightboxBg: nyersTokenek.canvasBg
@@ -83,8 +83,8 @@ QtObject {
 
         // ------- jelző színek -------
         // sötét háttéren a világos alap-zöld/kék beleolvadna: világosított pár
-        readonly property color picasaGreen: tema.dark ? "#6cbf3f" : "#3b8f00"    // az EGYETLEN zöld tett
-        readonly property color selectionBlue: tema.dark ? "#4d6b80" : "#83a7bd"  // jelölő kék (lista, szűrő)
+        readonly property color picasaGreen: tema.dark ? "#6a965a" : "#3b8f00"    // az EGYETLEN zöld tett
+        readonly property color selectionBlue: tema.dark ? "#2f5650" : "#83a7bd"  // jelölő kék (lista, szűrő)
 
         // #839: a keresősáv SZŰRŐ-gombjainak MÉRT színei
         // (`respack.yt` → `globalbuttons_filter_n/_p/_h` és a tíz
@@ -114,9 +114,9 @@ QtObject {
         // #384: a TÉNYLEGES kijelölés mélykékje (constants.ui alist_selcolor_win);
         // a sötét érték a selectionBlue világos/sötét arányából becsült — az
         // eredetiben nincs sötét változat (a Picasa mindig világos).
-        readonly property color panelSelectionActive: tema.dark ? "#1b4a68" : "#25648b"
-        readonly property color folderGold: tema.dark ? "#a98c53" : "#ebcc8f"     // mappa arany
-        readonly property color folderGoldBorder: tema.dark ? "#8a7040" : "#d9b571"
+        readonly property color panelSelectionActive: tema.dark ? "#3d7068" : "#25648b"
+        readonly property color folderGold: tema.dark ? "#8a7445" : "#ebcc8f"     // mappa arany
+        readonly property color folderGoldBorder: tema.dark ? "#6e5c36" : "#d9b571"
         // #1132: a bal hasáb bejegyzés-TÍPUSAI külön ikont kapnak, mert az
         // eredetiben az ikon nem díszítés, hanem a típust kódolja (kilenc
         // erőforrás az `icons/` névtérben). A MÉRET és a JELENTÉS mért, a RAJZ
@@ -152,20 +152,20 @@ QtObject {
         // A korábbi komment ígérete szerint ez EGY szám átírása volt: 500 → 600.
         readonly property int tooltipDelay: 600
 
-        readonly property color listPanelBg: tema.dark ? "#2e2e2e" : "#e8e8e8"
-        readonly property color listPanelBorder: tema.dark ? "#5a5a5a" : "#bababa"
-        readonly property color listPanelShadow: tema.dark ? "#1f1f1f" : "#d6d6d6"
-        readonly property color listPanelInnerLight: tema.dark ? "#3a3a3a" : "#f8f8f8"
-        readonly property color listPanelInnerLight2: tema.dark ? "#343434" : "#f0f0f0"
+        readonly property color listPanelBg: tema.dark ? "#1c2328" : "#e8e8e8"
+        readonly property color listPanelBorder: tema.dark ? "#28323a" : "#bababa"
+        readonly property color listPanelShadow: tema.dark ? "#0b0f11" : "#d6d6d6"
+        readonly property color listPanelInnerLight: tema.dark ? "#222a30" : "#f8f8f8"
+        readonly property color listPanelInnerLight2: tema.dark ? "#1f262b" : "#f0f0f0"
         // #894: a görgetősáv hüvelykjének MÉRT átmenete (`scrollart/base_win`,
         // 15 × 25: vízszintes átmenet, függőlegesen állandó).
         //   x0 #B6B6B6 · x1 #C7C7C7 → x7 #D9D9D9 → x13 #EDEDED · x14 #C8C8C8
-        readonly property color scrollThumbEdgeDark: tema.dark ? "#3f3f3f" : "#b6b6b6"
-        readonly property color scrollThumbMid: tema.dark ? "#5a5a5a" : "#d9d9d9"
-        readonly property color scrollThumbLight: tema.dark ? "#6d6d6d" : "#ededed"
-        readonly property color scrollThumbEdgeSoft: tema.dark ? "#454545" : "#c8c8c8"
-        readonly property color folderBlue: tema.dark ? "#5b7fa6" : "#9dc0e0"
-        readonly property color folderBlueBorder: tema.dark ? "#43607e" : "#7ba3c8"
+        readonly property color scrollThumbEdgeDark: tema.dark ? "#28323a" : "#b6b6b6"
+        readonly property color scrollThumbMid: tema.dark ? "#3a464f" : "#d9d9d9"
+        readonly property color scrollThumbLight: tema.dark ? "#44515b" : "#ededed"
+        readonly property color scrollThumbEdgeSoft: tema.dark ? "#2e3940" : "#c8c8c8"
+        readonly property color folderBlue: tema.dark ? "#4a6a80" : "#9dc0e0"
+        readonly property color folderBlueBorder: tema.dark ? "#3a5466" : "#7ba3c8"
         //: `icons/album` (16 × 18) — narancs könyv: rendes album
         readonly property color albumOrange: tema.dark ? "#b3762f" : "#eeae5e"
         readonly property color albumOrangeBorder: tema.dark ? "#8d5c24" : "#cf8f42"
@@ -180,14 +180,14 @@ QtObject {
         readonly property color labelGray: tema.dark ? "#8d8d8d" : "#c7c7c7"
         readonly property color labelGrayBorder: tema.dark ? "#6f6f6f" : "#a6a6a6"
         readonly property color folderArrow: tema.dark ? "#d9a63a" : "#e0a92e"    // mappafa nyíl
-        readonly property color linkBlue: tema.dark ? "#8ab4f8" : "#1a0dab"       // hivatkozások
+        readonly property color linkBlue: tema.dark ? "#6fb0a6" : "#1a0dab"       // hivatkozások
 
         // ------- oldalsáv részletek -------
-        readonly property color panelHeaderBg: tema.dark ? "#343a3e" : "#e1e4e7"
-        readonly property color panelHeaderTop: tema.dark ? "#3d4448" : "#eef0f2"  // fejléc-átmenet teteje
-        readonly property color panelHeaderText: tema.dark ? "#c9c9c9" : "#3a3a3a"
+        readonly property color panelHeaderBg: tema.dark ? "#1c2328" : "#e1e4e7"
+        readonly property color panelHeaderTop: tema.dark ? "#222a30" : "#eef0f2"  // fejléc-átmenet teteje
+        readonly property color panelHeaderText: tema.dark ? "#cfc9bb" : "#3a3a3a"
         readonly property color panelSelectionText: "#ffffff"
-        readonly property color panelYearText: tema.dark ? "#9c988f" : "#7a776f"  // mono évszám-címke
+        readonly property color panelYearText: tema.dark ? "#8b8a80" : "#7a776f"  // mono évszám-címke
 
         // #1488: a `constants.ui` lista-hasáb (`alist_*`) ÖT élő színe, ami a
         // #384 köréből kimaradt. Az értékek a szállított fájlból olvasva
@@ -213,15 +213,15 @@ QtObject {
         //   így jelzi, hogy a húzás célpontja NEM ugyanaz, mint a kijelölés.
         //
         //: `alist_hicolor2_win = #E5E2DA` — a lista MÁSODIK kiemelőszíne
-        readonly property color listHighlightAlt: tema.dark ? "#423d2e" : "#e5e2da"
+        readonly property color listHighlightAlt: tema.dark ? "#2b2a24" : "#e5e2da"
         //: `alist_dragcolor = #82A6BD` — a fogd-és-vidd célpont jelzése
-        readonly property color listDragTarget: tema.dark ? "#4c6a7f" : "#82a6bd"
+        readonly property color listDragTarget: tema.dark ? "#2e544e" : "#82a6bd"
         //: `alist_catcolor = #EDEAE4` — kategória-fejléc (csoportsor) háttere
-        readonly property color listCategoryBg: tema.dark ? "#433c2d" : "#edeae4"
+        readonly property color listCategoryBg: tema.dark ? "#24231e" : "#edeae4"
         //: `alist_dotcolor = #BEBEBE` — a lista pont-jelölője
-        readonly property color listDotMarker: tema.dark ? "#4a4a4a" : "#bebebe"
+        readonly property color listDotMarker: tema.dark ? "#3a464f" : "#bebebe"
         //: `alist_stickycolor = #EAE7DC` — a rögzített (sticky) fejléc háttere
-        readonly property color listStickyBg: tema.dark ? "#46402a" : "#eae7dc"
+        readonly property color listStickyBg: tema.dark ? "#26251f" : "#eae7dc"
 
         // ------- lightbox / indexkép-csoport -------
         // #2043: az eredeti Picasa `runtime/constants.ui` fájljának „Album
@@ -231,23 +231,23 @@ QtObject {
         // A sötét pár azonos színezet és telítettség, tükrözött világossággal
         // (32,9% -> 67,1%) — ugyanaz a meleg barna, nem elszürkítve.
         readonly property color folderTitle: tema.dark ? "#baa29c" : "#634b45"
-        readonly property color folderDate: tema.dark ? "#b0aca4" : "#5a5750"
-        readonly property color addDescription: tema.dark ? "#8b877f" : "#a29e96" // dőlt
-        readonly property color thumbBorder: tema.dark ? "#454545" : "#d9d9d9"
-        readonly property color thumbSelection: tema.dark ? "#2aa8ff" : "#009eff" // rács-kijelölés (3.9)
-        readonly property color thumbHover: tema.dark ? "#3f5f75" : "#a8c8de"
+        readonly property color folderDate: tema.dark ? "#8b8a80" : "#5a5750"
+        readonly property color addDescription: tema.dark ? "#6f6e66" : "#a29e96" // dőlt
+        readonly property color thumbBorder: tema.dark ? "#28323a" : "#d9d9d9"
+        readonly property color thumbSelection: tema.dark ? "#4d8f85" : "#009eff" // rács-kijelölés (3.9)
+        readonly property color thumbHover: tema.dark ? "#2a3f3c" : "#a8c8de"
 
         // ------- infó-sáv, tálca, néző -------
-        readonly property color infoBar: tema.dark ? "#3c6382" : "#568fb7"
+        readonly property color infoBar: tema.dark ? "#23403c" : "#568fb7"
         readonly property color infoBarText: "#ffffff"
-        readonly property color trayBg: tema.dark ? "#262626" : "#f8f8f8"
-        readonly property color trayBorder: tema.dark ? "#3c3c3c" : "#d0d0c8"
+        readonly property color trayBg: tema.dark ? "#12181b" : "#f8f8f8"
+        readonly property color trayBorder: tema.dark ? "#28323a" : "#d0d0c8"
         // #1420: a képtálca doboza (`thumbui/scratchback`) az eredetiben KÜLÖN,
         // világosabb panel a sáv hátterén — a valódi Picasa képernyőképén mérve
         // a sáv #eaeaea, a doboz #f8f8f8, a kerete #dfdfdf. Nálunk a sáv MÁR
         // #f8f8f8, ezért a dobozt egy fokkal világosabbra tesszük: a KÜLÖNBSÉG
         // iránya (a doboz világosabb a sávnál) marad az eredetié.
-        readonly property color trayPanelBg: tema.dark ? "#303030" : "#ffffff"
+        readonly property color trayPanelBg: tema.dark ? "#1c2328" : "#ffffff"
         // #1919: az összecsukott mappa-/album-token feliratának pirulája
         // (`scratch/highlight`). MÉRVE a `…214629.jpg` felvételen: a fehér
         // tálcaháttér fölött RGB(107, 153, 186), és ÁTTETSZŐ — a borítókép
@@ -266,23 +266,23 @@ QtObject {
         //: `alabel_lighttext = #FFFFFF` — a felirat mindkét témán fehér, mert
         //: a pirula mindkettőn sötétkék
         readonly property color trayTokenHighlightText: "#ffffff"
-        readonly property color viewerBg: tema.dark ? "#1a1a1a" : "#808080"
+        readonly property color viewerBg: tema.dark ? "#0c1013" : "#808080"
         // A Mozgófilm bal hasábjának kék szegélye (a Windows-os mérce szerint).
-        readonly property color movieBoxBorder: tema.dark ? "#4d6b80" : "#b4bfe0"
+        readonly property color movieBoxBorder: tema.dark ? "#2f5650" : "#b4bfe0"
         // A Mozgófilm bal hasábjának MÉRT színei (képpontból olvasva a mércéről):
         // a hasáb töltése, a fülek (a nem kijelölt kékes átmenettel, a kijelölt
         // világossal, kék szegéllyel), a letiltott felirat (Törlés) és a piros
         // X-jel a filmcsík gombján. A sötét párt a mi döntésünk.
-        readonly property color movieBoxFill: tema.dark ? "#282828" : "#e8e8e8"
-        readonly property color movieTabFillTop: tema.dark ? "#3d4f63" : "#bec6df"
-        readonly property color movieTabFillBottom: tema.dark ? "#4a5f75" : "#c5cde4"
-        readonly property color movieTabSelected: tema.dark ? "#2e2e2e" : "#e8e8e8"
-        readonly property color movieTabBorder: tema.dark ? "#3f5c75" : "#6a80c1"
+        readonly property color movieBoxFill: tema.dark ? "#151b1f" : "#e8e8e8"
+        readonly property color movieTabFillTop: tema.dark ? "#1c2328" : "#bec6df"
+        readonly property color movieTabFillBottom: tema.dark ? "#222a30" : "#c5cde4"
+        readonly property color movieTabSelected: tema.dark ? "#151b1f" : "#e8e8e8"
+        readonly property color movieTabBorder: tema.dark ? "#3a464f" : "#6a80c1"
         readonly property color movieDisabledText: tema.dark ? "#6a6a6a" : "#bababa"
         // Az Opciók lista letiltott felirata: a mérce legsötétebb képpontja.
         // A Törlésé (movieDisabledText) más árnyalat, ezért külön token.
         readonly property color movieOptionDisabledText: tema.dark ? "#6a6a6a" : "#b1b1b1"
-        readonly property color movieRemoveMark: tema.dark ? "#e05a5a" : "#b10000"
+        readonly property color movieRemoveMark: tema.dark ? "#b85648" : "#b10000"
 
         // #3663: a kettős nézet „Kijelölve" jelvénye a `respack.yt`
         // felvételén MÉRT szürke — a #3013 tévesen a `selectionBlue`
@@ -300,10 +300,10 @@ QtObject {
         //
         // A sötét pár a saját krómunké: a `trayBg` sötét értékénél egy fokkal
         // világosabb, hogy a sáv a fotó alatt ELVÁLJON, ahogy világosban is.
-        readonly property color captionBar: tema.dark ? "#333333" : "#c6c6c6"
-        readonly property color captionBarText: tema.dark ? "#e8e8e8" : "#1a1a1a"
+        readonly property color captionBar: tema.dark ? "#1c2328" : "#c6c6c6"
+        readonly property color captionBarText: tema.dark ? "#cfc9bb" : "#1a1a1a"
         //: a felirat-kapcsoló kis doboza — a felvételen FEHÉR, sötét kerettel
-        readonly property color captionToggleBg: tema.dark ? "#d8d8d8" : "#ffffff"
+        readonly property color captionToggleBg: tema.dark ? "#8b8a80" : "#ffffff"
         readonly property color captionToggleBorder: tema.dark ? "#555555" : "#5a5a5a"
 
         // #900: a kijelölésen KÍVÜLI terület elsötétítése a szerkesztő
@@ -328,9 +328,9 @@ QtObject {
         // A sötét pár a mért világos színek sötét megfelelője, AZONOS
         // színezettel (a kékes árnyalat megmarad, csak a világosság fordul) —
         // saját döntés, az eredetiben nincs sötét mód.
-        readonly property color sliderGroove: tema.dark ? "#3b4553" : "#cad5e5"
-        readonly property color sliderGrooveBorder: tema.dark ? "#5b6573" : "#9aa2ae"
-        readonly property color sliderGrooveTick: tema.dark ? "#79838f" : "#f3f5f9"
+        readonly property color sliderGroove: tema.dark ? "#28323a" : "#cad5e5"
+        readonly property color sliderGrooveBorder: tema.dark ? "#3a464f" : "#9aa2ae"
+        readonly property color sliderGrooveTick: tema.dark ? "#5a6670" : "#f3f5f9"
 
         // #2641: a FOGANTYÚ közepére VÉSETT vonal két oszlopa — szintén a
         // `respack.yt`-ből, képpontról képpontra. A `scaleslider/thumb`
@@ -402,42 +402,42 @@ QtObject {
 
         readonly property color selectionDim: "#8f2f2f2f"
         readonly property color starYellow: "#f5c518"
-        readonly property color textGray: tema.dark ? "#a29e96" : "#7a776f"
+        readonly property color textGray: tema.dark ? "#8b8a80" : "#7a776f"
 
         // ------- #6125: további, korábban rögzített felületi színek -------
         // A világos értékek a lecserélt QML-literálokkal egyeznek, ezért a
         // világos felület képpontja nem változik. A sötét párok új, semleges
         // krómértékek; a fotóra rajzolt rétegek nem ezeket használják.
-        readonly property color inputBorder: tema.dark ? "#555555" : "#8a8a8a"
-        readonly property color searchClearBg: tema.dark ? "#555555" : "#b0b0b0"
+        readonly property color inputBorder: tema.dark ? "#3a464f" : "#8a8a8a"
+        readonly property color searchClearBg: tema.dark ? "#3a464f" : "#b0b0b0"
         readonly property color unnamedGroupLabel: tema.dark ? "#c6b9b4" : "#68564f"
-        readonly property color unnamedWelcomeBg: tema.dark ? "#303030" : "#606060"
-        readonly property color unnamedWelcomeBorder: tema.dark ? "#5a5a5a" : "#999999"
-        readonly property color unnamedWelcomeButtonBorder: tema.dark ? "#5a5a5a" : "#dddddd"
-        readonly property color headerPlayButtonBg: tema.dark ? "#3a3a3a" : "#ffffff"
-        readonly property color headerPlayButtonHoverBg: tema.dark ? "#4a4a4a" : "#f0f0ee"
-        readonly property color filterResultsBg: tema.dark ? "#3c6143" : "#5aa865"
-        readonly property color filterNoticeBg: tema.dark ? "#51462c" : "#f0e3b0"
-        readonly property color collageMissingBg: tema.dark ? "#454545" : "#c8c8c8"
+        readonly property color unnamedWelcomeBg: tema.dark ? "#1c2328" : "#606060"
+        readonly property color unnamedWelcomeBorder: tema.dark ? "#3a464f" : "#999999"
+        readonly property color unnamedWelcomeButtonBorder: tema.dark ? "#3a464f" : "#dddddd"
+        readonly property color headerPlayButtonBg: tema.dark ? "#1c2328" : "#ffffff"
+        readonly property color headerPlayButtonHoverBg: tema.dark ? "#28323a" : "#f0f0ee"
+        readonly property color filterResultsBg: tema.dark ? "#2f4a2a" : "#5aa865"
+        readonly property color filterNoticeBg: tema.dark ? "#3a3220" : "#f0e3b0"
+        readonly property color collageMissingBg: tema.dark ? "#28323a" : "#c8c8c8"
         readonly property color collageMissingBorder: tema.dark ? "#8a8a8a" : "#787878"
         readonly property color collageMissingText: tema.dark ? "#c8c8c8" : "#787878"
         readonly property color collageGroupBorder: tema.dark ? "#ff8a52" : "#f85e0f"
-        readonly property color collageSheetBorder: tema.dark ? "#555555" : "#9a9a9a"
-        readonly property color optionsSliderTick: tema.dark ? "#6d6d6d" : "#c4c4c4"
-        readonly property color settingsDivider: tema.dark ? "#555555" : "#a0a0a0"
-        readonly property color trayScratchLabel: tema.dark ? "#9c9c9c" : "#c3c3c3"
+        readonly property color collageSheetBorder: tema.dark ? "#3a464f" : "#9a9a9a"
+        readonly property color optionsSliderTick: tema.dark ? "#3a464f" : "#c4c4c4"
+        readonly property color settingsDivider: tema.dark ? "#3a464f" : "#a0a0a0"
+        readonly property color trayScratchLabel: tema.dark ? "#8b8a80" : "#c3c3c3"
         // A médialejátszó fölötti felirat nem app-króm: a képkockától
         // függetlenül világos marad, ezért mindkét módban azonos token.
         readonly property color mediaOverlayText: "#e8e8e8"
-        readonly property color mediaControlThumbBg: tema.dark ? "#686868" : "#d5d5d5"
+        readonly property color mediaControlThumbBg: tema.dark ? "#5a6670" : "#d5d5d5"
 
         // ------- Qt Controls-paletta (Main.qml ablak-palettája) -------
         readonly property color controlBase: nyersTokenek.contentPanel        // beviteli mezők háttere
-        readonly property color buttonBg: tema.dark ? "#3a3a3a" : "#e8e8e8"
+        readonly property color buttonBg: tema.dark ? "#232b31" : "#e8e8e8"
         readonly property color placeholderText: "#8f8b83"       // mindkét témán olvasható
-        readonly property color trackBg: tema.dark ? "#3a3a3a" : "#dddddd"     // haladásjelző sín
-        readonly property color shadeLight: tema.dark ? "#3f3f3f" : "#ffffff"  // kiemelt él
-        readonly property color shadeDark: tema.dark ? "#161616" : "#9a9a9a"   // árnyék-él
+        readonly property color trackBg: tema.dark ? "#232b31" : "#dddddd"     // haladásjelző sín
+        readonly property color shadeLight: tema.dark ? "#2a3339" : "#ffffff"  // kiemelt él
+        readonly property color shadeDark: tema.dark ? "#080b0d" : "#9a9a9a"   // árnyék-él
 
         // ------- #883: a gomb NÉGY állapota — MÉRVE a `respack.yt`-ből -------
         //
@@ -495,7 +495,7 @@ QtObject {
         // `ink`-et (ami sötét témán kivilágosodik, és a világos gombháttéren
         // eltűnne). Rögzített sötét tinta MINDKÉT témában — nem azért „pár",
         // mert a felület, amin ül, maga sem az.
-        readonly property color iconInk: tema.dark ? "#2b2b2b" : "#2b2b2b"
+        readonly property color iconInk: tema.dark ? "#cfc9bb" : "#2b2b2b"
 
         // --- Tipográfia (#526) -------------------------------------------
         //

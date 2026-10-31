@@ -131,6 +131,7 @@ VART: dict[str, list[str]] = {
         SZ,
         "Use Color Management",
         "Dark Theme",
+        "Zoom >",
         "Display Mode >",
         SZ,
         "Thumbnail Caption >",
@@ -253,6 +254,11 @@ ELTERESEK = {
         "Sötét téma — nálunk van, az eredetiben nincs. A mért 7. csoport "
         "(Színkezelés + Megjelenítési mód) végére került, mert "
         "megjelenítési beállítás, nem nézetváltó."
+    ),
+    "&View · Zoom >": (
+        "KC Picasa fork: whole-UI zoom (Bigger / Smaller / Reset / Restart now), "
+        "required by the KC app playbook. Not in the original Picasa; it sits "
+        "next to Dark Theme because both are display settings."
     ),
     "&Tools · Find Faces...": (
         "Az eredeti Eszközök menüjében NINCS arckereső parancs: a „Find "
