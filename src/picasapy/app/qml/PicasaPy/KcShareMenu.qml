@@ -4,8 +4,9 @@ import QtQuick.Controls
 PicasaMenu {
     id: shareMenu
     property var bar: null
+    property var hostWindow: bar && bar.kcHostWindow ? bar.kcHostWindow : null
     title: "Share to my devices"
-    function paths() { return bar && bar.kcHostWindow ? bar.kcHostWindow.photoActionPaths() : [] }
+    function paths() { return hostWindow ? hostWindow.photoActionPaths() : [] }
     PicasaMenuItem {
         text: "Send to Phone"; objectName: "kcSendPhone"; sajat: true; placeholder: false
         enabled: kcTools.configured("phone") && shareMenu.paths().length > 0

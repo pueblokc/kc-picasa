@@ -11,6 +11,7 @@ import "selection.js" as Selection
 // kijelölés-logika) — itt csak az állapot és a bekötés marad.
 ApplicationWindow {
     id: window
+    KcStatusToast {}
     // A kivont komponens mellett a főablak korábbi QML-neve megmarad.
     property alias shortcutSave: mainWindowCommands.exportShortcutSave
     property alias errorBanner: mainWindowPeripheralLayers.exportErrorBanner
