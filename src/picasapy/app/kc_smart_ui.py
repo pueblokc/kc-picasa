@@ -152,18 +152,24 @@ class KcSmartController(QObject):
         try:
             index = self._index_factory(self._data_dir)
             hits = index.similar(query, limit=50) if similar else index.search(query, limit=50, min_score=0.0)
-            self._searchDone.emit(result_cards(hits) if similar or strong_matches(hits) else [], bool(hits))
+            strong = True
+            if hits and not similar:
+                from .kc_things import QUERY_MIN_WINS, query_wins
+                strong = query_wins(index, query, [path for path, _ in hits]) >= QUERY_MIN_WINS
+            # Always show the closest photos; the status line says whether they are real matches.
+            self._searchDone.emit(result_cards(hits), strong)
         except Exception as exc:  # noqa: BLE001
             self._searchDone.emit(exc, False)
 
     @Slot(object, bool)
-    def _on_search_done(self, outcome: object, had_hits: bool) -> None:
+    def _on_search_done(self, outcome: object, strong: bool) -> None:
         if isinstance(outcome, Exception):
             self._status = f"AI search failed: {outcome}"
             self._results = []
         else:
             self._results = outcome
-            self._status = f"{len(outcome)} matches" if outcome else ("No strong matches" if had_hits else "No indexed photos yet")
+            self._status = (("Matches" if strong else "No strong matches - closest guesses")
+                            if outcome else "No indexed photos yet")
         self.resultsChanged.emit()
         self.statusChanged.emit()
 

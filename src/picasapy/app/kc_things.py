@@ -20,17 +20,65 @@ CREATE INDEX IF NOT EXISTS thing_tags_tag ON thing_tags(tag);
 """
 
 
-def update_things(index: SmartIndex, *, threshold: float = 0.27) -> int:
-    """Replace tags for indexed photos; omit weak CLIP guesses."""
+CLIP_LOGIT_SCALE = 100.0
+# Calibrated on 375 real phone photos (2026-10-31). Raw CLIP cosine scores sit in a narrow
+# 0.2-0.3 band for every photo, so a fixed cosine cut-off tags almost nothing (or noise).
+# A softmax over the whole vocabulary asks the right question instead: which label fits
+# THIS photo best? 0.3 tagged 66/375 photos with mostly-correct labels; 0.1 tagged noise.
+TAG_MIN_PROB = 0.3
+TAG_MAX_PER_PHOTO = 2
+# Query confidence: the query must beat the vocabulary labels on its own top hits.
+QUERY_WIN_PROB = 0.3
+QUERY_MIN_WINS = 2
+_SYNONYM_COS = 0.9
+
+
+def _vocab_vectors(index: SmartIndex) -> np.ndarray:
+    prompts = [f"a photo of {word.replace('_', ' ')}" for word in VOCABULARY]
+    return np.asarray(index.encoder.encode_texts(prompts), dtype=np.float32)
+
+
+def _softmax_rows(logits: np.ndarray) -> np.ndarray:
+    z = np.exp(logits - logits.max(axis=-1, keepdims=True))
+    return z / z.sum(axis=-1, keepdims=True)
+
+
+def query_wins(index: SmartIndex, query: str, top_paths: list[str], *, top_k: int = 5) -> int:
+    """How many of the top hits the query describes better than every everyday label.
+
+    "a cat" on a library with no cats still has top hits, but on those photos "dog" or
+    "toy" wins, so this returns 0-1 and the UI can say "no strong matches".
+    """
+    paths, matrix, rows = index._load_matrix()
+    if not paths or not top_paths:
+        return 0
+    q = np.asarray(index.encoder.encode_texts([f"a photo of {query}"])[0], dtype=np.float32)
+    vocab = _vocab_vectors(index)
+    vocab = vocab[(vocab @ q) < _SYNONYM_COS]  # a label that IS the query must not compete with it
+    wins = 0
+    for path in top_paths[:top_k]:
+        i = rows.get(path)
+        if i is None:
+            continue
+        img = matrix[i]
+        logits = CLIP_LOGIT_SCALE * np.concatenate([[img @ q], vocab @ img])
+        if _softmax_rows(logits)[0] >= QUERY_WIN_PROB:
+            wins += 1
+    return wins
+
+
+def update_things(index: SmartIndex, *, min_prob: float = TAG_MIN_PROB,
+                  max_per_photo: int = TAG_MAX_PER_PHOTO) -> int:
+    """Replace tags for indexed photos: each photo's best-fitting labels, weak guesses omitted."""
     paths, matrix, _ = index._load_matrix()
     if not paths:
         return 0
-    prompts = [f"a photo of {word.replace('_', ' ')}" for word in VOCABULARY]
-    text_vecs = np.asarray(index.encoder.encode_texts(prompts), dtype=np.float32)
-    scores = matrix @ text_vecs.T
-    records = [(path, VOCABULARY[j], float(score))
-               for i, path in enumerate(paths)
-               for j, score in enumerate(scores[i]) if score >= threshold]
+    probs = _softmax_rows(CLIP_LOGIT_SCALE * (matrix @ _vocab_vectors(index).T))
+    records = []
+    for i, path in enumerate(paths):
+        for j in np.argsort(probs[i])[::-1][:max_per_photo]:
+            if probs[i, j] >= min_prob:
+                records.append((path, VOCABULARY[j], float(probs[i, j])))
     with sqlite3.connect(index.db_path) as conn:
         conn.executescript(SCHEMA)
         conn.execute("DELETE FROM thing_tags")
