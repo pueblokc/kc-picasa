@@ -35,6 +35,8 @@ from __future__ import annotations
 from collections.abc import Collection
 from pathlib import PurePath
 
+from picasapy import kc_heif  # KC: optional HEIC/AVIF decoder
+
 PHOTO_EXTENSIONS = frozenset(
     {
         ".jpeg", ".jpg", ".tif", ".tiff", ".bmp", ".gif", ".psd", ".png",
@@ -49,6 +51,7 @@ PHOTO_EXTENSIONS = frozenset(
         # sajátja, nem termékhiba; ezért nem is szabad rá tesztet kötni.)
         ".webp",
     }
+    | kc_heif.EXTENSIONS  # KC: .heic/.heif/.hif/.avif, only if pillow-heif is installed
 )
 
 RAW_EXTENSIONS = frozenset(
@@ -137,7 +140,7 @@ def media_kind_if_enabled(
     if kind is None or enabled_filetypes is None:
         return kind
     extension = PurePath(name).suffix.lower()
-    if extension in JPEG_EXTENSIONS:
+    if extension in JPEG_EXTENSIONS or extension in kc_heif.EXTENSIONS:  # KC: no settings group
         return kind
     group = _EXTENSION_FILETYPE_GROUP.get(extension)
     return kind if group in enabled_filetypes else None

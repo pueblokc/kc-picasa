@@ -56,6 +56,10 @@ dev = [
     "ruff",
     "build",
 ]
+# KC: optional KC Picasa extras. `pip install -e .[kc]` adds HEIC/HEIF/AVIF support.
+kc = [
+    "pillow-heif",
+]
 
 # Parancssori belépési pont: `pip install .` / `pipx install .` után a
 # `picasapy` parancs a src/picasapy/app/__main__.py:main()-t hívja (#4).

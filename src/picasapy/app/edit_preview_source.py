@@ -9,6 +9,7 @@ import numpy as np
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QColorSpace, QImage, QImageReader
 
+from picasapy import kc_heif  # KC:
 from picasapy.cvimage import scale_down
 from picasapy.lazy_cv2 import cv2
 from picasapy.rawdecode import dekodol_nyerset, nyers_hosszabb_el, nyers_utvonal
@@ -71,6 +72,9 @@ def _decode_source(
     binárisban is - semmit nem tesz."""
     if nyers_utvonal(path):
         return _nyers_forras(path, full_res=full_res)
+    if kc_heif.needs_helper(path):  # KC: HEIC/AVIF editor load path (upright RGB)
+        bgr = kc_heif.decode_to_bgr(path, None if full_res else _MAX_PREVIEW_EDGE)
+        return None if bgr is None else np.ascontiguousarray(bgr[:, :, ::-1])
     reader = QImageReader(str(path))
     reader.setAutoTransform(True)
     native = reader.size()

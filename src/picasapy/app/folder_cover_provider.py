@@ -134,12 +134,15 @@ IKON_MERET = 64
 def _olvasd_be(utvonal: Path):
     import cv2
 
+    from picasapy import kc_heif  # KC:
     from picasapy.rawdecode import dekodol_nyerset, nyers_utvonal
 
     if nyers_utvonal(utvonal):
         # #528: nyers (RAW) borítónak sincs `cv2` dekódere — enélkül a
         # mappa ikonja néma szürke maradt.
         kep = dekodol_nyerset(utvonal, IKON_MERET)
+    elif kc_heif.is_heif(utvonal):  # KC: HEIC/HEIF/AVIF cover
+        kep = kc_heif.decode_to_bgr(utvonal, IKON_MERET)
     else:
         # #1991: ékezetes néven a `cv2.imread(str(...))` Windowson némán
         # `None`-t ad — a bájtokat magunk olvassuk be.

@@ -134,7 +134,10 @@ def test_desktop_mime_types_cover_every_scanner_photo_extension():
         line for line in desktop.splitlines() if line.startswith("MimeType=")
     )
     declared = set(mime_line.removeprefix("MimeType=").rstrip(";").split(";"))
-    assert declared == set(IMAGE_MIME_TYPES_BY_EXTENSION.values())
+    # KC: the HEIC/AVIF types only exist when pillow-heif is installed, so the
+    # static Debian .desktop does not list them.
+    kc_mimes = {"image/heic", "image/heif", "image/avif"}
+    assert declared == set(IMAGE_MIME_TYPES_BY_EXTENSION.values()) - kc_mimes
 
 
 def test_runtime_installed_desktop_entry_keeps_image_mime_types(

@@ -32,6 +32,7 @@ from picasapy.cvimage import (
 from picasapy.ini.filters import FilterOp, serialize_filters
 from picasapy.ioutil import write_atomic
 from picasapy.rawdecode import dekodol_nyerset, nyers_hosszabb_el, nyers_utvonal
+from picasapy import kc_heif  # KC:
 from picasapy.render import apply_filters, normalize_crop_ops
 from picasapy.render.elonezeti_arany import elonezeti_arany
 from picasapy.scanner.filetypes import VIDEO_EXTENSIONS
@@ -371,6 +372,8 @@ class ThumbnailCache(_CacheGenerationMixin, _CacheStorageMixin):
             # kell mennie. A célméretet átadjuk: ha a fájlban van beágyazott
             # JPEG-előnézet, abból nagyságrenddel gyorsabb a bélyegkép.
             return dekodol_nyerset(source, self._size if target is None else target)
+        if kc_heif.is_heif(source):  # KC: HEIC/HEIF/AVIF (upright BGR)
+            return kc_heif.decode_to_bgr(source, self._size if target is None else target)
         # #144: a forrást EGYSZER olvassuk be — a méret-próba és a dekódolás
         # ugyanabból a bájtpufferből dolgozik (korábban PIL Image.open +
         # np.fromfile kétszer nyitotta a fájlt, ami NAS-on drága).
