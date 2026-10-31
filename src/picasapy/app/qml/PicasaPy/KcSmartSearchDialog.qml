@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Dialog {
+KcDialog {
     id: dialog
     objectName: "kcSmartSearchDialog"
     modal: true
@@ -10,44 +10,52 @@ Dialog {
     width: 780
     height: 640
     anchors.centerIn: parent
-    background: Rectangle { color: "#151b1f"; border.color: "#28323a"; radius: 10 }
     contentItem: ColumnLayout {
         spacing: 10
         RowLayout {
             Layout.fillWidth: true
-            TextField {
+            KcTextField {
                 id: query
                 objectName: "kcSmartQuery"
                 Layout.fillWidth: true
                 placeholderText: "Describe a photo..."
                 onAccepted: kcSmart.search(text)
             }
-            Button { text: "Search"; onClicked: kcSmart.search(query.text) }
+            KcButton { text: "Search"; accent: true; onClicked: kcSmart.search(query.text) }
         }
-        Text { text: kcSmart ? kcSmart.status : ""; color: "#cfc9bb" }
+        Text { text: "Try: dog, Halloween, birthday cake, snow, red truck"; color: Theme.textGray; font.pixelSize: 12 }
+        Text { text: kcSmart ? kcSmart.status : ""; color: Theme.ink }
         GridView {
             Layout.fillWidth: true; Layout.fillHeight: true
             clip: true
-            cellWidth: 150; cellHeight: 150
+            cellWidth: 146; cellHeight: 174
             model: kcSmart ? kcSmart.results : []
             delegate: Rectangle {
-                width: 142; height: 142; color: "#1c2328"; radius: 5
+                width: 138; height: 166; color: Theme.chromeBg; radius: 5
+                border.color: Theme.chromeBorder
                 Column {
-                    anchors.fill: parent; spacing: 4
-                    Image { source: modelData.url; width: parent.width; height: 104; fillMode: Image.PreserveAspectCrop; asynchronous: true }
-                    Text { text: modelData.name + "  " + modelData.score + "%"; color: "#cfc9bb"; elide: Text.ElideRight; width: parent.width }
+                    anchors.fill: parent; anchors.margins: 4; spacing: 3
+                    Image { source: modelData.url; width: 130; height: 130; sourceSize.width: 130; sourceSize.height: 130; fillMode: Image.PreserveAspectCrop; asynchronous: true }
+                    Row {
+                        width: parent.width; spacing: 4
+                        Text { text: modelData.name; color: Theme.ink; elide: Text.ElideRight; width: parent.width - scoreLabel.width - 4; font.pixelSize: 11 }
+                        Text { id: scoreLabel; text: modelData.score + "%"; color: Theme.textGray; font.pixelSize: 10 }
+                    }
                 }
-                TapHandler { onTapped: { controller.selectFolder(modelData.folder); dialog.close() } }
-                TapHandler { acceptedButtons: Qt.RightButton; onTapped: kcSmart.similar(modelData.path) }
-                Button { text: "Similar"; anchors.right: parent.right; anchors.top: parent.top; onClicked: kcSmart.similar(modelData.path) }
+                TapHandler { acceptedButtons: Qt.LeftButton; onDoubleTapped: fileOpsController.openPhoto(modelData.path) }
+                TapHandler { acceptedButtons: Qt.RightButton; onTapped: similarMenu.popup() }
+                KcPopupMenu {
+                    id: similarMenu
+                    PicasaMenuItem { text: "Find Similar"; sajat: true; kc: true; onTriggered: kcSmart.similar(modelData.path) }
+                }
             }
         }
         RowLayout {
             Layout.fillWidth: true
-            Button { text: "Update Index"; onClicked: kcSmart.updateIndex() }
-            Button { text: "Cancel Indexing"; enabled: kcSmart && kcSmart.indexing; onClicked: kcSmart.cancel() }
+            KcButton { text: "Update Index"; onClicked: kcSmart.updateIndex() }
+            KcButton { text: "Cancel Indexing"; enabled: kcSmart && kcSmart.indexing; onClicked: kcSmart.cancel() }
             Item { Layout.fillWidth: true }
-            Button { text: "Close"; onClicked: dialog.close() }
+            KcButton { text: "Close"; onClicked: dialog.close() }
         }
     }
 }
