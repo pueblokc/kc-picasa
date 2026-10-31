@@ -12,6 +12,8 @@ import "selection.js" as Selection
 ApplicationWindow {
     id: window
     KcStatusToast {}
+    KcOnThisDayDialog { id: kcOnThisDayDialog }
+    function openKcOnThisDay() { kcOnThisDayDialog.open() }
     // A kivont komponens mellett a főablak korábbi QML-neve megmarad.
     property alias shortcutSave: mainWindowCommands.exportShortcutSave
     property alias errorBanner: mainWindowPeripheralLayers.exportErrorBanner
