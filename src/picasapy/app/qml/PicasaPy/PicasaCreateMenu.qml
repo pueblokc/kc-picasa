@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 PicasaMenu {
+    id: createMenu // KC
     property var bar: null
     objectName: "menuCreateRoot"
     title: qsTr("&Create")
@@ -81,4 +82,5 @@ PicasaMenu {
     MenuSeparator {}
     // hiányzott (#324 audit)
     PicasaMenuItem { text: qsTr("Publish to &Blogger..."); placeholder: false; retired: true }  // #638
+    KcProjectsMenu { bar: createMenu.bar } // KC
 }

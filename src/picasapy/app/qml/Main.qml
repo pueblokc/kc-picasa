@@ -16,6 +16,8 @@ ApplicationWindow {
     function openKcOnThisDay() { kcOnThisDayDialog.open() }
     KcSmartSearchDialog { id: kcSmartSearchDialog }
     function openKcSmartSearch() { kcSmartSearchDialog.open() }
+    KcProjectDialog { id: kcProjectDialog }
+    function openKcProject(kind) { kcProjectDialog.showProject(kind, photoActionPaths()) }
     Shortcut { sequence: "Ctrl+Shift+F"; onActivated: window.openKcSmartSearch() }
     KcRestoreDialog { id: kcRestoreDialog }
     function openKcRestore() { kcRestoreDialog.open() }

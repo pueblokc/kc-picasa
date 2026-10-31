@@ -7,6 +7,7 @@ PicasaMenu {
     title: "&KC"
     KcShareMenu { bar: menu.bar }
     KcTextMenu {}
+    KcProjectsMenu { bar: menu.bar }
     PicasaMenuItem {
         objectName: "kcSmartSearch"; text: "Smart Search..."; sajat: true; placeholder: false
         onTriggered: if (menu.bar && menu.bar.kcHostWindow) menu.bar.kcHostWindow.openKcSmartSearch()
