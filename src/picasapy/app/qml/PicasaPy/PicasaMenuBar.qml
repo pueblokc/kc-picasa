@@ -11,6 +11,7 @@ import QtQuick.Layouts
 // pontoknál a felirat csak vizuális, nincs mögötte élő billentyű.
 MenuBar {
     id: bar
+    property var kcHostWindow: null
     // #305: null-őr a `controller` kötésekhez — a QML-engine leépítésekor
     // a context property átmenetileg null lehet, miközben a QML-kötések
     // utoljára kiértékelődnek.
@@ -722,6 +723,7 @@ MenuBar {
     }
     PicasaCreateMenu { bar: bar }
     PicasaToolsMenu { bar: bar }
+    KcMenu { bar: bar }
     PicasaHelpMenu {
         id: menuHelp
         bar: bar

@@ -5,6 +5,7 @@ PicasaMenuBar {
     id: mainMenuBar
 
     required property var hostWindow
+    kcHostWindow: hostWindow
     required property var hostController
     required property var hostFileOpsController
     required property var hostPassportController

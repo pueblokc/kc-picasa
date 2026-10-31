@@ -319,3 +319,5 @@ MainWindowCommands 1.0 MainWindowCommands.qml
 MainWindowWorkspace 1.0 MainWindowWorkspace.qml
 MainWindowPeripheralLayers 1.0 MainWindowPeripheralLayers.qml
 MainWindowLibraryActions 1.0 MainWindowLibraryActions.qml
+KcMenu 1.0 KcMenu.qml
+KcShareMenu 1.0 KcShareMenu.qml
