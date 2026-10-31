@@ -2,33 +2,53 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Dialog {
+KcDialog {
     id: dialog
     objectName: "kcThingsDialog"
     title: "Things"
     modal: true
-    width: 420
-    height: 540
+    width: 780
+    height: 640
     anchors.centerIn: parent
-    background: Rectangle { color: "#151b1f"; border.color: "#4d8f85"; radius: 9 }
+    property string selectedTag: ""
     contentItem: ColumnLayout {
-        Text { text: "Explore your photos by subject"; color: "#cfc9bb" }
+        spacing: 10
+        Text { text: "Explore your photos by subject"; color: Theme.ink }
         ScrollView {
-            Layout.fillWidth: true; Layout.fillHeight: true
-            ListView {
+            Layout.fillWidth: true; Layout.preferredHeight: 150
+            clip: true
+            Flow {
+                width: dialog.availableWidth - 20; spacing: 7
+                Repeater {
                 model: kcSmart ? kcSmart.things : []
-                delegate: Button {
+                delegate: KcButton {
                     required property var modelData
-                    width: ListView.view.width
-                    text: modelData.tag + "   " + modelData.count
+                    text: modelData.tag + "  " + modelData.count
+                    accent: dialog.selectedTag === modelData.tag
                     onClicked: {
+                        dialog.selectedTag = modelData.tag
                         kcSmart.showThing(modelData.tag)
-                        dialog.close()
-                        window.openKcSmartSearch()
                     }
+                }
                 }
             }
         }
-        Button { text: "Close"; onClicked: dialog.close() }
+        Text { text: dialog.selectedTag ? kcSmart.status : "Choose a subject"; color: Theme.textGray }
+        GridView {
+            Layout.fillWidth: true; Layout.fillHeight: true
+            clip: true; cellWidth: 146; cellHeight: 174
+            model: dialog.selectedTag && kcSmart ? kcSmart.results : []
+            delegate: Rectangle {
+                width: 138; height: 166; radius: 5
+                color: Theme.chromeBg; border.color: Theme.chromeBorder
+                Column {
+                    anchors.fill: parent; anchors.margins: 4; spacing: 3
+                    Image { width: 130; height: 130; source: modelData.url; sourceSize.width: 130; sourceSize.height: 130; fillMode: Image.PreserveAspectCrop; asynchronous: true }
+                    Text { width: parent.width; text: modelData.name; color: Theme.ink; font.pixelSize: 11; elide: Text.ElideRight }
+                }
+                TapHandler { acceptedButtons: Qt.LeftButton; onDoubleTapped: fileOpsController.openPhoto(modelData.path) }
+            }
+        }
+        KcButton { text: "Close"; Layout.alignment: Qt.AlignRight; onClicked: dialog.close() }
     }
 }
