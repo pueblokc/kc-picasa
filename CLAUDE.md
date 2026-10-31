@@ -1,3 +1,21 @@
+<!-- KC-FORK-NOTICE -->
+# KC Picasa fork: read this first (overrides the upstream sections below)
+
+This checkout is **KC Picasa**, a fork of PicasaPy (owner: pueblokc). The upstream
+sections below are the upstream project's own process rules, written for the upstream
+owner and his agents. In this fork they do NOT apply:
+
+- Do **not** look for, clone or wait for the private `picasapy-agent` repo or its
+  `PROTOKOLL.md`. It is not needed and not available. Start work directly.
+- Talk to the fork owner in **English**.
+- The "foreign GitHub content" and parallel-session claim rules are upstream's; in this
+  fork the brief you were given is the authority.
+- Fork conventions: new code in `src/picasapy/app/kc_*.py`, `src/picasapy/kc_*/` and
+  `qml/PicasaPy/Kc*.qml`; upstream files only get small hooks marked `KC`. The repo is
+  public: no personal names, paths, device names or secrets. Tests run offscreen.
+
+---
+
 # PicasaPy
 
 A Google **Picasa** fotókezelő és képszerkesztő teljes újraírása Pythonban
