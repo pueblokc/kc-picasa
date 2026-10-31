@@ -33,13 +33,25 @@ def test_link_extraction_and_missing_link(tmp_path, monkeypatch):
     controller = kc_tools.KcToolsController(config_file=_config(tmp_path))
     controller._copyLinks.connect(copied.append)
     controller._finished.connect(messages.append)
+    outputs = {
+        "file": "File share created!\n  URL:    https://example.test/abc\n  Slug:   abc\n",
+        "upload": "Upload OK!\n",
+        "get": "Title: x\n  >>> SEND THIS LINK (password built in, no typing): https://example.test/abc?k=1\n",
+    }
     monkeypatch.setattr(kc_tools, "run_command", lambda argv: (calls.append(argv) or
-                         subprocess.CompletedProcess(argv, 0, ">>> SEND THIS LINK: https://example.test/x\n", "")))
+                         subprocess.CompletedProcess(argv, 0, outputs[argv[2]], "")))
     controller._share_worker("link", ["a.jpg", "b.raw"])
-    assert calls == [["python", "share.py", "file", "a.jpg"],
-                     ["python", "share.py", "file", "b.raw"]]
-    assert copied == ["https://example.test/x\nhttps://example.test/x"]
+    assert calls == [["python", "share.py", "file", "KC Picasa - 2 photos"],
+                     ["python", "share.py", "upload", "abc", "a.jpg"],
+                     ["python", "share.py", "upload", "abc", "b.raw"],
+                     ["python", "share.py", "get", "abc"]]
+    assert copied == ["https://example.test/abc?k=1"]
     assert messages[-1] == "Link copied"
+
+    calls.clear()
+    outputs["file"] = "File share created!\n"
+    controller._share_worker("link", ["a.jpg"])
+    assert messages[-1] == "KC share failed: Share Link: no slug came back"
 
 
 def test_windows_runner_hides_window(monkeypatch):

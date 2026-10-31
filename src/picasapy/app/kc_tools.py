@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 import threading
@@ -31,6 +32,21 @@ def read_config(path: Path | None = None) -> dict[str, str]:
 def run_command(argv: list[str]) -> subprocess.CompletedProcess[str]:
     return subprocess.run(argv, capture_output=True, text=True, check=False,
                           creationflags=CREATE_NO_WINDOW if sys.platform == "win32" else 0)
+
+
+def _run_checked(argv: list[str]) -> subprocess.CompletedProcess[str]:
+    result = run_command(argv)
+    if result.returncode:
+        raise RuntimeError((result.stderr or result.stdout or "Command failed").strip()[-300:])
+    return result
+
+
+def _field(text: str, label: str) -> str:
+    """Value after ``label`` on the first line that contains it (``  Slug:   abc`` -> ``abc``)."""
+    for line in text.splitlines():
+        if label in line:
+            return line.split(label, 1)[1].strip()
+    return ""
 
 
 class KcToolsController(QObject):
@@ -79,24 +95,33 @@ class KcToolsController(QObject):
                 commands = [[cfg["drop_python"], cfg["drop_script"], *paths,
                              "--title", "KC Picasa", "--project", "KC Picasa"]]
             else:
-                commands = [[cfg.get("drop_python", sys.executable), cfg["secureshare_script"], "file", path]
-                            for path in paths]
+                commands = []
             links = []
             for command in commands:
-                result = run_command(command)
-                if result.returncode:
-                    raise RuntimeError((result.stderr or result.stdout or "Command failed").strip()[-300:])
-                if action == "link":
-                    line = next((line for line in result.stdout.splitlines() if line.startswith(">>> SEND THIS LINK")), "")
-                    link = line.removeprefix(">>> SEND THIS LINK").lstrip(" :\t")
-                    if not link.startswith("https://"):
-                        raise RuntimeError("Share Link command returned no link")
-                    links.append(link)
+                _run_checked(command)
+            if action == "link":
+                links.append(self._secureshare_link(cfg, paths))
             if links:
                 self._copyLinks.emit("\n".join(links))
             self._finished.emit("Link copied" if links else "Sent")
         except (OSError, KeyError, RuntimeError) as error:
             self._finished.emit(f"KC share failed: {error}")
+
+    @staticmethod
+    def _secureshare_link(cfg: dict, paths: list[str]) -> str:
+        """One share for the whole selection: create it, upload each file, return the one-tap link."""
+        script = [cfg.get("drop_python", sys.executable), cfg["secureshare_script"]]
+        title = f"KC Picasa - {len(paths)} photo{'s' if len(paths) != 1 else ''}"
+        created = _run_checked([*script, "file", title]).stdout
+        slug = _field(created, "Slug:")
+        if not slug:
+            raise RuntimeError("Share Link: no slug came back")
+        for path in paths:
+            _run_checked([*script, "upload", slug, path])
+        info = _run_checked([*script, "get", slug]).stdout
+        link = next((m.group(0) for line in info.splitlines() if "SEND THIS LINK" in line
+                     for m in [re.search(r"https://\S+", line)] if m), "")
+        return link or _field(info, "URL:") or _field(created, "URL:")
 
     _finished = Signal(str)
     _copyLinks = Signal(str)
