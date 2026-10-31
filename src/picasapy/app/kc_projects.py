@@ -72,6 +72,7 @@ class KcProjectsController(QObject):
         self._output_dir = output_dir or Path.home() / "Pictures" / "KC Projects"
         self._busy = False
         self._output = ""
+        self._thumbnail_url = ""
         self._process: subprocess.Popen | None = None
         self._cancelled = False
         self._finished.connect(self._on_finished)
@@ -83,6 +84,10 @@ class KcProjectsController(QObject):
     @Property(str, notify=changed)
     def output(self) -> str:
         return self._output
+
+    @Property(str, notify=changed)
+    def thumbnailUrl(self) -> str:
+        return self._thumbnail_url
 
     @Slot(str, "QVariantList", "QVariantMap")
     def create(self, project: str, photos: list[str], options: dict) -> None:
@@ -112,6 +117,7 @@ class KcProjectsController(QObject):
         self._busy = True
         self._cancelled = False
         self._output = ""
+        self._thumbnail_url = ""
         self.changed.emit()
         self.message.emit(f"Rendering {title}...")
         threading.Thread(target=self._worker, args=(argv, output), daemon=True).start()
@@ -149,5 +155,30 @@ class KcProjectsController(QObject):
     def _on_finished(self, message: str, output: str) -> None:
         self._busy = False
         self._output = output
+        self._thumbnail_url = self._preview_for(Path(output)) if output else ""
         self.changed.emit()
         self.message.emit(message)
+
+    @staticmethod
+    def _preview_for(output: Path) -> str:
+        """Return a local image of the rendered artifact when its format permits."""
+        if output.suffix.lower() in {".jpg", ".jpeg", ".png", ".gif", ".webp"}:
+            return QUrl.fromLocalFile(str(output)).toString()
+        preview = output.with_name(output.stem + "-preview.jpg")
+        if output.suffix.lower() == ".mp4":
+            try:
+                subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "0.2", "-i",
+                                str(output), "-frames:v", "1", str(preview)],
+                               capture_output=True, timeout=15, check=True,
+                               creationflags=CREATE_NO_WINDOW if os.name == "nt" else 0)
+            except (OSError, subprocess.SubprocessError):
+                pass
+        elif output.suffix.lower() == ".pdf":
+            try:
+                import fitz
+                with fitz.open(output) as document:
+                    if document.page_count:
+                        document[0].get_pixmap(matrix=fitz.Matrix(0.7, 0.7)).save(preview)
+            except (ImportError, OSError, RuntimeError, ValueError):
+                pass
+        return QUrl.fromLocalFile(str(preview)).toString() if preview.is_file() else ""
