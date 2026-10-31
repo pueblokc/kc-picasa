@@ -50,6 +50,8 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QImage, QImageReader
 from PySide6.QtQuick import QQuickImageProvider
 
+from picasapy import kc_heif  # KC:
+
 from picasapy.app.display_mode_paint import (
     DISPLAY_MODE_QUERY_KEY,
     apply_display_mode_to_qimage,
@@ -95,9 +97,12 @@ class DisplayPhotoProvider(QQuickImageProvider):
         # szolgáltató képét nem forgatja utólag. A nyers `file://` út ezt az
         # `autoTransform`-mal kapja meg; a QML a méretet is a megjelenített
         # tájolásban kéri (`SlideshowView.forrasMeret`).
-        olvaso = QImageReader(utvonal)
-        olvaso.setAutoTransform(True)
-        kep = olvaso.read()
+        if kc_heif.needs_helper(utvonal):  # KC: HEIC/AVIF Qt can't read; already upright
+            kep = kc_heif.decode_to_qimage(utvonal)
+        else:
+            olvaso = QImageReader(utvonal)
+            olvaso.setAutoTransform(True)
+            kep = olvaso.read()
         if kep.isNull():
             # A hívónak a Qt `Error` státuszt ad; a diavetítés ilyenkor a
             # következő képre lép — ez ugyanaz, mint a nyers fájl útján.

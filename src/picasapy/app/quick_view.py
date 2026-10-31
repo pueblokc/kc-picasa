@@ -29,6 +29,11 @@ _EXTENSION_MIME_OVERRIDES = {
     ".tif": "image/tiff",
     ".tiff": "image/tiff",
     ".webp": "image/webp",
+    # KC: HEIC/HEIF/AVIF (listed in PHOTO_EXTENSIONS only if pillow-heif is installed)
+    ".avif": "image/avif",
+    ".heic": "image/heic",
+    ".heif": "image/heif",
+    ".hif": "image/heif",
 }
 
 IMAGE_MIME_TYPES_BY_EXTENSION = {

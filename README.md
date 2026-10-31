@@ -74,6 +74,8 @@ picasapy "C:\Users\felhasznalo\Pictures"
 
 The `picasapy` command opens the photo folder passed to it. The package dependencies are declared in `pyproject.toml` and are installed by `pip install .`.
 
+KC: HEIC / HEIF / AVIF photos (iPhone, newer Android) are supported when the optional `pillow-heif` package is installed: `pip install -e .[kc]`. Without it these files are simply not listed.
+
 ## Documentation
 
 Project specifications are in [`docs/specs/`](docs/specs/), and design decisions are in [`docs/decisions/`](docs/decisions/). Version-specific changes are listed in the [CHANGELOG](CHANGELOG.md).

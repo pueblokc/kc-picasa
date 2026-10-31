@@ -192,6 +192,11 @@ def _decode_small_source(path: Path) -> np.ndarray | None:
 
     QImageReader + autoTransform, az edit_preview.py `_decode_source`
     mintája — csak jóval kisebb célfelbontással, a bélyegkép-gyártáshoz."""
+    from picasapy import kc_heif  # KC: HEIC/AVIF effect-tile source (upright RGB)
+
+    if kc_heif.needs_helper(path):
+        bgr = kc_heif.decode_to_bgr(path, _SOURCE_EDGE)
+        return None if bgr is None else np.ascontiguousarray(bgr[:, :, ::-1])
     reader = QImageReader(str(path))
     reader.setAutoTransform(True)
     native = reader.size()

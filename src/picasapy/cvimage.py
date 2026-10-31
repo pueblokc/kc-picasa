@@ -20,6 +20,7 @@ from picasapy.lazy_cv2 import cv2
 import numpy as np
 from PIL import Image, UnidentifiedImageError
 
+from picasapy import kc_heif  # KC:
 from picasapy.rawdecode import dekodol_nyerset, nyers_utvonal
 
 
@@ -116,6 +117,8 @@ def dekodolj_forrast(
     ut = Path(source)
     if nyers_utvonal(ut):
         return dekodol_nyerset(ut, goal)
+    if kc_heif.is_heif(ut):  # KC: HEIC/HEIF/AVIF via pillow-heif (upright BGR)
+        return kc_heif.decode_to_bgr(ut, goal)
     payload = read_image_bytes(ut)
     if payload is None:
         return None

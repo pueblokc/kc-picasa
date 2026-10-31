@@ -7,6 +7,7 @@ from urllib.parse import quote
 
 from PySide6.QtCore import QUrl
 
+from picasapy import kc_heif  # KC:
 from picasapy.metadata import megjelenitett_meret
 from picasapy.paths import path_key
 from picasapy.ini.movie_trim import trim_from_filters
@@ -96,6 +97,8 @@ class PhotoGridAccess:
         if not 0 <= row < len(self._photos):
             return ""
         photo = self._photos[row]
+        if kc_heif.needs_helper(photo.name):  # KC: viewer goes through the HEIF-aware provider
+            return f"image://displayphoto/{quote(f'{photo.folder_path}/{photo.name}')}"
         return QUrl.fromLocalFile(f"{photo.folder_path}/{photo.name}").toString()
 
     def displayUrlAt(self, row: int, mode: str = "") -> str:
