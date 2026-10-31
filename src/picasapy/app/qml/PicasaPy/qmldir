@@ -320,6 +320,7 @@ MainWindowWorkspace 1.0 MainWindowWorkspace.qml
 MainWindowPeripheralLayers 1.0 MainWindowPeripheralLayers.qml
 MainWindowLibraryActions 1.0 MainWindowLibraryActions.qml
 KcMenu 1.0 KcMenu.qml
+KcTextMenu 1.0 KcTextMenu.qml
 KcShareMenu 1.0 KcShareMenu.qml
 KcStatusToast 1.0 KcStatusToast.qml
 KcOnThisDayDialog 1.0 KcOnThisDayDialog.qml

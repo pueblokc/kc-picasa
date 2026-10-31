@@ -733,16 +733,17 @@ QtObject {
     // A nem-szín tokenek (méretek, betűcsaládok) változatlanul mennek át:
     // a megjelenítési mód SZÍNTRANSZFORMÁCIÓ, méretet nem érint.
     readonly property int tooltipDelay: nyersTokenek.tooltipDelay
-    readonly property var fontSizeLadder: nyersTokenek.fontSizeLadder
+    readonly property real kcTextScale: (typeof kcUi !== "undefined" && kcUi) ? kcUi.textScale : 1.0
+    readonly property var fontSizeLadder: nyersTokenek.fontSizeLadder.map(n => Math.round(n * kcTextScale))
     readonly property int fontWeightNormal: nyersTokenek.fontWeightNormal
     readonly property int fontWeightBold: nyersTokenek.fontWeightBold
-    readonly property int headlineSize: nyersTokenek.headlineSize
-    readonly property int headlineLargeSize: nyersTokenek.headlineLargeSize
-    readonly property int fontSize: nyersTokenek.fontSize
-    readonly property int tileLabelSize: nyersTokenek.tileLabelSize
-    readonly property int buttonLabelSize: nyersTokenek.buttonLabelSize
+    readonly property int headlineSize: Math.round(nyersTokenek.headlineSize * kcTextScale)
+    readonly property int headlineLargeSize: Math.round(nyersTokenek.headlineLargeSize * kcTextScale)
+    readonly property int fontSize: Math.round(nyersTokenek.fontSize * kcTextScale)
+    readonly property int tileLabelSize: Math.round(nyersTokenek.tileLabelSize * kcTextScale)
+    readonly property int buttonLabelSize: Math.round(nyersTokenek.buttonLabelSize * kcTextScale)
     readonly property int lineLeading: nyersTokenek.lineLeading
-    readonly property int folderTitleSize: nyersTokenek.folderTitleSize
+    readonly property int folderTitleSize: Math.round(nyersTokenek.folderTitleSize * kcTextScale)
     readonly property string monoFamily: nyersTokenek.monoFamily
     readonly property string uiFamily: nyersTokenek.uiFamily
     readonly property string condensedFamily: nyersTokenek.condensedFamily

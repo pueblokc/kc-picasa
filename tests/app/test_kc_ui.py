@@ -22,6 +22,22 @@ def test_clamp_ui_scale(value, expected):
     assert kc_ui.clamp_ui_scale(value) == expected
 
 
+@pytest.mark.parametrize("value,expected", [
+    (None, 1.0), ("bad", 1.0), (float("nan"), 1.0),
+    (0.1, 0.9), (1.18, 1.15), (3, 1.5),
+])
+def test_clamp_text_scale(value, expected):
+    assert kc_ui.clamp_text_scale(value) == expected
+
+
+def test_text_scale_and_reduce_motion_persist(qt_app, settings):
+    c = kc_ui.KcUiController(settings=settings)
+    c.setTextScale(1.3)
+    c.setReduceMotion(True)
+    assert kc_ui.KcUiController(settings=settings).textScale == 1.3
+    assert kc_ui.KcUiController(settings=settings).reduceMotion is True
+
+
 def test_env_gets_saved_scale(settings):
     settings.setValue(kc_ui.UI_SCALE_KEY, "1.6")
     env = {}
